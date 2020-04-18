@@ -1,5 +1,4 @@
 import React from 'react'
-import socketIOClient from 'socket.io-client'
 import { inject, observer } from 'mobx-react'
 
 import Outer from './pages/Outer'
@@ -14,12 +13,6 @@ class App extends React.Component {
       response: false,
       endpoint: 'http://127.0.0.1:4001'
     }
-  }
-
-  componentDidMount () {
-    const { endpoint } = this.state
-    const socket = socketIOClient(endpoint)
-    socket.on('FromAPI', data => this.setState({ response: data }))
   }
 
   render () {

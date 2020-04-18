@@ -28,7 +28,7 @@ const generateCode = (length = 4) => {
 
 const createUser = (name, socket) => new User(name, socket)
 
-const createRoom = (user) => {
+function createRoom (user) {
   let roomName = generateCode()
   for (; rooms[roomName] !== undefined; roomName = generateCode());
   const room = new Room(roomName, user)
@@ -36,22 +36,28 @@ const createRoom = (user) => {
   return room.toClient()
 }
 
-const joinRoom = (roomName, user) => {
+function joinRoom (roomName, user) {
   rooms[roomName].addUser(user)
   return rooms[roomName].toClient()
 }
 
 io.on('connection', socket => {
   console.log('New client connected')
+  let myRoom = ''
   socket.on('create-room', userName => {
     console.log('create-room', userName)
+    myRoom = createRoom(createUser(userName, socket)).name
     socket.emit('change-page', {
       page: 'lobby',
-      data: createRoom(createUser(userName, socket))
+      data: rooms[myRoom].toClient()
     })
+  })
+  socket.on('launch-game', () => {
+    rooms[myRoom].startGame()
   })
   socket.on('join-room', (roomName, userName) => {
     console.log('join-room', roomName, userName)
+    myRoom = roomName
     socket.emit('change-page', {
       page: 'lobby',
       data: joinRoom(roomName, createUser(userName, socket))

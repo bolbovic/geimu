@@ -3,7 +3,9 @@ const Cliented = require('./Cliented')
 class User extends Cliented {
   constructor (name, socket) {
     super()
+    this.hand = []
     this.name = name
+    this.score = 0
     this.socket = socket
   }
 
@@ -13,7 +15,8 @@ class User extends Cliented {
 
   toClient () {
     return {
-      name: this.name
+      name: this.name,
+      score: this.score
     }
   }
 }
