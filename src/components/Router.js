@@ -1,9 +1,11 @@
 import React from 'react'
 
+import Answer from '../views/Answer'
 import Login from '../views/Login'
 import Lobby from '../views/Lobby'
 import Pick from '../views/Pick'
 import PickAnswer from '../views/PickAnswer'
+import Results from '../views/Results'
 import Scoreboard from '../views/Scoreboard'
 import Waiting from '../views/Waiting'
 
@@ -20,6 +22,10 @@ export default ({ page }) => {
       return <Waiting />
     case 'pick-answer':
       return <PickAnswer />
+    case 'answers':
+      return <Answer />
+    case 'results':
+      return <Results />
     case 'login':
     default:
       return <Login />

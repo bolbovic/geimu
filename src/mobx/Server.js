@@ -8,7 +8,13 @@ export default class Server {
       data: {},
       userName: '',
       get isMaster () {
-        return this.data.master ? this.userName === this.data.master.name : false
+        return this.data.master && this.userName === this.data.master.name
+      },
+      get isPicker () {
+        return this.data.picker && this.data.picker.name === this.userName
+      },
+      get isReady () {
+        return this.getUser(this.userName).ready
       }
     })
     this.socket = socketIOClient('http://127.0.0.1:4001')
@@ -21,6 +27,14 @@ export default class Server {
       console.log('new-data received...', data)
       this.data = data
     })
+  }
+
+  getUser (name) {
+    let uu = {};
+    (this.data.users || []).forEach(u => {
+      if (name === u.name) uu = u
+    })
+    return uu
   }
 
   createRoom (userName) {
@@ -41,5 +55,17 @@ export default class Server {
 
   chooseQuestion (q) {
     this.socket.emit('choose-question', q)
+  }
+
+  chooseAnswer (a) {
+    this.socket.emit('choose-answer', this.userName, a)
+  }
+
+  pickAnswer (u) {
+    this.socket.emit('pick-answer', u.name)
+  }
+
+  ready () {
+    this.socket.emit('ready', this.userName)
   }
 }

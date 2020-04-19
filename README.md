@@ -9,3 +9,9 @@ phases
 - host select his answer
 - back to first
 
+todo
+- check if username is already used
+- add real cards and picking cards system
+- add design
+- add different kind of card sets
+- add spectate mode for people who wants to join next turn

@@ -58,6 +58,15 @@ io.on('connection', socket => {
   socket.on('choose-question', q => {
     rooms[myRoom].chooseQuestion(q)
   })
+  socket.on('choose-answer', (u, a) => {
+    rooms[myRoom].chooseAnswer(u, a)
+  })
+  socket.on('pick-answer', u => {
+    rooms[myRoom].pickAnswer(u)
+  })
+  socket.on('ready', u => {
+    rooms[myRoom].setReady(u)
+  })
   socket.on('join-room', (roomName, userName) => {
     console.log('join-room', roomName, userName)
     myRoom = roomName
