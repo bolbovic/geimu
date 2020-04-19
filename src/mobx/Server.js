@@ -38,4 +38,8 @@ export default class Server {
   launchGame () {
     this.socket.emit('launch-game', this.data.name)
   }
+
+  chooseQuestion (q) {
+    this.socket.emit('choose-question', q)
+  }
 }

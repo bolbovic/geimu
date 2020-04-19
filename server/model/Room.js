@@ -20,16 +20,37 @@ class Room extends Cliented {
     })
   }
 
+  chooseQuestion (q) {
+    this.users.forEach(u => {
+      console.log('choose-question', u.name, this.picker.name)
+      if (this.picker.name === u.name) {
+        u.socket.emit('change-page', {
+          page: 'waiting-answers',
+          data: {
+            picked: {},
+            picker: this.picker.toClient(),
+            users: this.users.map(uu => uu.toClient())
+          }
+        })
+      } else {
+        u.socket.emit('change-page', {
+          page: 'pick-answer',
+          data: { hand: u.hand, picker: this.picker.toClient(), question: q }
+        })
+      }
+    })
+  }
+
   startGame () {
     this.nextQuestion()
   }
 
   nextQuestion () {
     this.pickNextUser()
-    const picker = this.users[this.idxUser]
+    this.picker = this.users[this.idxUser]
     this.users.forEach(u => {
-      console.log('next-question', u.name, picker.name)
-      if (picker.name === u.name) {
+      console.log('next-question', u.name, this.picker.name)
+      if (this.picker.name === u.name) {
         u.socket.emit('change-page', {
           page: 'pick-question',
           data: { questions: ['What is your name?', 'What is your age?'] }

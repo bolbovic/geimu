@@ -55,6 +55,9 @@ io.on('connection', socket => {
   socket.on('launch-game', () => {
     rooms[myRoom].startGame()
   })
+  socket.on('choose-question', q => {
+    rooms[myRoom].chooseQuestion(q)
+  })
   socket.on('join-room', (roomName, userName) => {
     console.log('join-room', roomName, userName)
     myRoom = roomName
