@@ -10,8 +10,9 @@ phases
 - back to first
 
 todo
-- check if username is already used
+- -check if username is already used-
 - add real cards and picking cards system
 - add design
+- handle disconnections
 - add different kind of card sets
 - add spectate mode for people who wants to join next turn

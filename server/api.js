@@ -69,11 +69,15 @@ io.on('connection', socket => {
   })
   socket.on('join-room', (roomName, userName) => {
     console.log('join-room', roomName, userName)
-    myRoom = roomName
-    socket.emit('change-page', {
-      page: 'lobby',
-      data: joinRoom(roomName, createUser(userName, socket))
-    })
+    if (rooms[roomName].users.filter(u => u.name === userName).length === 0) {
+      myRoom = roomName
+      socket.emit('change-page', {
+        page: 'lobby',
+        data: joinRoom(roomName, createUser(userName, socket))
+      })
+    } else {
+      socket.emit('error-msg', 'User already in use')
+    }
     // add an event on disconnect
   })
   socket.on('disconnect', () => console.log('Client disconnected'))

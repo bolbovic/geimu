@@ -7,6 +7,7 @@ export default class Server {
       currentPage: '',
       data: {},
       userName: '',
+      error: null,
       get isMaster () {
         return this.data.master && this.userName === this.data.master.name
       },
@@ -22,11 +23,14 @@ export default class Server {
       console.log('change-page received...', data)
       this.currentPage = data.page
       this.data = data.data
+      this.error = null
     })
     this.socket.on('new-data', data => {
       console.log('new-data received...', data)
       this.data = data
+      this.error = null
     })
+    this.socket.on('error-msg', error => { this.error = error })
   }
 
   getUser (name) {

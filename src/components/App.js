@@ -6,6 +6,10 @@ import Router from './Router'
 
 import '../styles/components/App.css'
 
+const Error = inject('server')(observer(({ server }) => server.error ? (
+  <div className='error'>{server.error}</div>
+) : null))
+
 class App extends React.Component {
   constructor () {
     super()
@@ -19,6 +23,7 @@ class App extends React.Component {
     const { server } = this.props
     return (
       <Outer>
+        <Error />
         <Router page={server.currentPage} />
       </Outer>
     )
