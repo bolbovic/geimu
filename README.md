@@ -11,7 +11,8 @@ phases
 
 todo
 - -check if username is already used-
-- add real cards and picking cards system
+- -add real cards and picking cards system-
+- handle 2/3 cards selection
 - add design
 - handle disconnections
 - add different kind of card sets

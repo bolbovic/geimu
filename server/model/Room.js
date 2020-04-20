@@ -1,7 +1,8 @@
 const Cliented = require('./Cliented')
+const shuffle = require('lodash').shuffle
 
 class Room extends Cliented {
-  constructor (name, master) {
+  constructor (name, master, deck) {
     super()
     this.master = master
     this.name = name
@@ -9,6 +10,9 @@ class Room extends Cliented {
     this.users = []
     this.users.push(master)
     this.idxUser = -1
+    this.questions = shuffle(deck.blackCards)
+    this.whiteCards = shuffle(deck.whiteCards)
+    this.discard = []
   }
 
   addUser (user) {
@@ -26,7 +30,7 @@ class Room extends Cliented {
     this.users.forEach(u => {
       console.log('choose-question', u.name, this.picker.name)
       if (this.picker.name === u.name) {
-        u.changePage('waiting-answers', this.getWaitingUpdate())
+        u.changePage('waiting-answers', this.getWaitingUpdate(u))
       } else {
         u.changePage('pick-answer', {
           hand: u.hand,
@@ -38,16 +42,18 @@ class Room extends Cliented {
   }
 
   chooseAnswer (userName, answer) {
-    this.getUser(userName).picked = answer
+    const u = this.getUser(userName)
+    u.picked = answer
+    this.discard.push(u.hand.splice(u.hand.indexOf(answer), 1, this.whiteCards.shift()))
     if (this.everyonePicked) {
-      this.users.forEach(u => u.changePage('answers', this.getWaitingUpdate()))
+      this.users.forEach(u => u.changePage('answers', this.getWaitingUpdate(u)))
     } else {
       const us = this.getWaitingUsers()
       us.forEach(u => {
         if (u.name === userName) {
-          u.changePage('waiting-answers', this.getWaitingUpdate())
+          u.changePage('waiting-answers', this.getWaitingUpdate(u))
         } else {
-          u.update(this.getWaitingUpdate())
+          u.update(this.getWaitingUpdate(u))
         }
       })
     }
@@ -57,7 +63,7 @@ class Room extends Cliented {
     this.winner = this.getUser(u)
     this.winner.won(this.question)
     this.users.forEach(u => {
-      u.changePage('results', this.getResultsUdate())
+      u.changePage('results', this.getResultsUdate(u))
     })
   }
 
@@ -66,11 +72,14 @@ class Room extends Cliented {
     if (this.everyoneReady) {
       this.nextQuestion()
     } else {
-      this.users.forEach(u => u.update(this.getResultsUdate()))
+      this.users.forEach(u => u.update(this.getResultsUdate(u)))
     }
   }
 
   startGame () {
+    this.users.forEach(u => {
+      u.hand = this.whiteCards.splice(0, 7)
+    })
     this.nextQuestion()
   }
 
@@ -83,9 +92,11 @@ class Room extends Cliented {
       u.resetRound()
       console.log('next-question', u.name, this.picker.name)
       if (this.picker.name === u.name) {
-        u.changePage('pick-question', { questions: ['What is your name?', 'What is your age?'] })
+        u.changePage('pick-question', {
+          questions: this.questions.splice(0, 2)
+        })
       } else {
-        u.changePage('scoreboard', this.getWaitingUpdate())
+        u.changePage('scoreboard', this.getWaitingUpdate(u))
       }
     })
   }
@@ -122,16 +133,17 @@ class Room extends Cliented {
     return [this.picker].concat(this.users.filter(u => u.picked !== null))
   }
 
-  getWaitingUpdate () {
+  getWaitingUpdate (u) {
     return {
+      hand: u.hand,
       question: this.question,
       picker: this.picker.toClient(),
       users: this.users.map(uu => uu.toClient())
     }
   }
 
-  getResultsUdate () {
-    return Object.assign(this.getWaitingUpdate(), { winner: this.winner.toClient() })
+  getResultsUdate (u) {
+    return Object.assign(this.getWaitingUpdate(u), { winner: this.winner.toClient() })
   }
 
   toClient () {

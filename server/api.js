@@ -2,6 +2,15 @@ const express = require('express')
 const http = require('http')
 const socketIo = require('socket.io')
 
+const rawDecks = require('../games/raw.json')
+
+const availableDecks = [
+  { name: 'Main CAU', decks: rawDecks.order.slice(0, 8) },
+  { name: 'All CAU', decks: rawDecks.order.slice(0, 30) }
+].concat(rawDecks.order.map(o => ({ name: rawDecks[o].name, decks: [o] })))
+
+console.log(availableDecks)
+
 const Room = require('./model/Room')
 const User = require('./model/User')
 
@@ -28,10 +37,10 @@ const generateCode = (length = 4) => {
 
 const createUser = (name, socket) => new User(name, socket)
 
-function createRoom (user) {
+function createRoom (user, deck) {
   let roomName = generateCode()
   for (; rooms[roomName] !== undefined; roomName = generateCode());
-  const room = new Room(roomName, user)
+  const room = new Room(roomName, user, generateDeck(deck))
   rooms[roomName] = room
   return room.toClient()
 }
@@ -41,12 +50,25 @@ function joinRoom (roomName, user) {
   return rooms[roomName].toClient()
 }
 
+function generateDeck (deck) {
+  let blackCards = []
+  let whiteCards = []
+  availableDecks[deck].decks.forEach(d => {
+    blackCards = blackCards.concat(rawDecks[d].black.map(cId => rawDecks.blackCards[cId].text))
+    whiteCards = whiteCards.concat(rawDecks[d].white.map(cId => rawDecks.whiteCards[cId]))
+  })
+  return {
+    blackCards,
+    whiteCards
+  }
+}
+
 io.on('connection', socket => {
   console.log('New client connected')
   let myRoom = ''
-  socket.on('create-room', userName => {
-    console.log('create-room', userName)
-    myRoom = createRoom(createUser(userName, socket)).name
+  socket.on('create-room', (userName, deck) => {
+    console.log('create-room', userName, deck)
+    myRoom = createRoom(createUser(userName, socket), deck).name
     socket.emit('change-page', {
       page: 'lobby',
       data: rooms[myRoom].toClient()
@@ -81,6 +103,8 @@ io.on('connection', socket => {
     // add an event on disconnect
   })
   socket.on('disconnect', () => console.log('Client disconnected'))
+
+  socket.emit('available-decks', availableDecks)
 })
 
 server.listen(port, () => console.log(`Listening on port ${port}`))

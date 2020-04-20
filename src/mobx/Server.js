@@ -6,6 +6,7 @@ export default class Server {
     extendObservable(this, {
       currentPage: '',
       data: {},
+      decks: null,
       userName: '',
       error: null,
       get isMaster () {
@@ -30,6 +31,10 @@ export default class Server {
       this.data = data
       this.error = null
     })
+    this.socket.on('available-decks', decks => {
+      console.log('available-decks received...', decks)
+      this.decks = decks
+    })
     this.socket.on('error-msg', error => { this.error = error })
   }
 
@@ -41,10 +46,10 @@ export default class Server {
     return uu
   }
 
-  createRoom (userName) {
+  createRoom (userName, deck) {
     console.log('creating room...')
     this.userName = userName
-    this.socket.emit('create-room', userName)
+    this.socket.emit('create-room', userName, deck)
   }
 
   joinRoom (roomName, userName) {
