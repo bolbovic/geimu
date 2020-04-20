@@ -9,7 +9,7 @@ export default inject('server')(observer(({ server }) => (
   <div>
     <div>Pick</div>
     <div>
-      {(server.data.questions || []).map((q, i) => <Question key={i} question={q} />)}
+      {(server.data.choices || []).map((q, i) => <Question key={i} question={q} />)}
     </div>
   </div>
 )))

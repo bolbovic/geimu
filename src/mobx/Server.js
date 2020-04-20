@@ -7,8 +7,8 @@ export default class Server {
       currentPage: '',
       data: {},
       decks: null,
-      userName: '',
       error: null,
+      serverReady: false,
       get isMaster () {
         return this.data.master && this.userName === this.data.master.name
       },
@@ -18,17 +18,47 @@ export default class Server {
       get isReady () {
         return this.getUser(this.userName).ready
       },
+      get userName () {
+        return this.data.self ? this.data.self.name : ''
+      },
+      get roomName () {
+        return this.data.name
+      },
       get numberOfAnswers () {
         const nb = this.data.question ? this.data.question.split('_').length : 1
         return nb > 1 ? nb - 1 : 1
+      },
+      get hand () {
+        return this.data.self ? this.data.self.hand : []
       }
     })
     this.socket = socketIOClient('http://127.0.0.1:4001')
+    this.socket.on('connect', () => {
+      console.log('just got connected')
+      // checked if in a middle of a game
+      const roomName = window.sessionStorage.getItem('room-name')
+      const userName = window.sessionStorage.getItem('user-name')
+      if (roomName && userName) {
+        this.socket.emit('try-reconnect', roomName, userName)
+      } else {
+        this.serverReady = true
+      }
+    })
     this.socket.on('change-page', data => {
       console.log('change-page received...', data)
       this.currentPage = data.page
       this.data = data.data
+      this.serverReady = true
       this.error = null
+      window.sessionStorage.setItem('room-name', this.roomName)
+      window.sessionStorage.setItem('user-name', this.userName)
+    })
+    this.socket.on('error-reconnect', msg => {
+      this.serverReady = true
+      this.error = msg
+      this.currentPage = ''
+      window.sessionStorage.removeItem('room-name')
+      window.sessionStorage.removeItem('user-name')
     })
     this.socket.on('new-data', data => {
       console.log('new-data received...', data)
@@ -52,13 +82,11 @@ export default class Server {
 
   createRoom (userName, deck) {
     console.log('creating room...')
-    this.userName = userName
     this.socket.emit('create-room', userName, deck)
   }
 
   joinRoom (roomName, userName) {
     console.log('joining room...')
-    this.userName = userName
     this.socket.emit('join-room', roomName, userName)
   }
 

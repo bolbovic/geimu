@@ -15,5 +15,10 @@ todo
 - -handle 2/3 cards selection-
 - add design
 - handle disconnections
-- add different kind of card sets
+- handle kicks
+- handle switch to spectator
+- -add different kind of card sets-
 - add spectate mode for people who wants to join next turn
+- giving the possibility to people to use their own decks
+- handle some kind of settings
+- create other similar games

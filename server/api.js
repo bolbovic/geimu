@@ -50,6 +50,14 @@ function joinRoom (roomName, user) {
   return rooms[roomName].toClient()
 }
 
+function checkIfFantom (roomName) {
+  let b = true
+  rooms[roomName].users.forEach(u => {
+    b = b && u.disconnected
+  })
+  b && console.log(`Deleting room ${roomName}`) && delete rooms[roomName]
+}
+
 function generateDeck (deck) {
   let blackCards = []
   let whiteCards = []
@@ -66,6 +74,7 @@ function generateDeck (deck) {
 io.on('connection', socket => {
   console.log('New client connected')
   let myRoom = ''
+  let myUserName = ''
   socket.on('create-room', (userName, deck) => {
     console.log('create-room', userName, deck)
     if (!userName || userName === '') {
@@ -73,6 +82,7 @@ io.on('connection', socket => {
       return
     }
     myRoom = createRoom(createUser(userName, socket), deck).name
+    myUserName = userName
     socket.emit('change-page', {
       page: 'lobby',
       data: rooms[myRoom].toClient()
@@ -90,6 +100,7 @@ io.on('connection', socket => {
     }
     if (rooms[roomName].users.filter(u => u.name === userName).length === 0) {
       myRoom = roomName
+      myUserName = userName
       socket.emit('change-page', {
         page: 'lobby',
         data: joinRoom(roomName, createUser(userName, socket))
@@ -114,7 +125,22 @@ io.on('connection', socket => {
   socket.on('ready', u => {
     rooms[myRoom].setReady(u)
   })
-  socket.on('disconnect', () => console.log('Client disconnected'))
+  socket.on('try-reconnect', (r, u) => {
+    console.log('try-reconnecting', r, u)
+    if (rooms[r] && rooms[r].tryReconnect(u, socket)) {
+      myRoom = r
+      myUserName = u
+    } else {
+      socket.emit('error-reconnect', 'Impossible to reconnect')
+    }
+  })
+  socket.on('disconnect', () => {
+    console.log('Client disconnected', myRoom, myUserName)
+    if (myRoom) {
+      rooms[myRoom].userDisconnected(myUserName)
+      checkIfFantom(myRoom)
+    }
+  })
 
   socket.emit('available-decks', availableDecks)
 })

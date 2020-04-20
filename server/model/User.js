@@ -10,14 +10,22 @@ class User extends Cliented {
     this.socket = socket
     this.picked = null
     this.ready = false
+    this.disconnected = false
   }
 
   changePage (page, data) {
-    this.socket.emit('change-page', { page, data })
+    this.lastPage = page
+    !this.disconnected && this.socket.emit('change-page', { page, data: this.myData(data) })
   }
 
   update (data) {
-    this.socket.emit('new-data', data)
+    !this.disconnected && this.socket.emit('new-data', this.myData(data))
+  }
+
+  reconnect (socket, data) {
+    this.socket = socket
+    this.disconnected = false
+    this.changePage(this.lastPage, data)
   }
 
   won (q) {
@@ -28,11 +36,18 @@ class User extends Cliented {
   resetRound () {
     this.picked = null
     this.ready = false
-    // get new card
+  }
+
+  myData (data) {
+    return Object.assign(data, {
+      hand: this.hand,
+      self: Object.assign(this.toClient(), { hand: this.hand })
+    })
   }
 
   toClient () {
     return {
+      disconnected: this.disconnected,
       name: this.name,
       pairs: this.pairs,
       picked: this.picked,

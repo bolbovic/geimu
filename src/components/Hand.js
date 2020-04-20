@@ -5,7 +5,7 @@ export default inject('server')(observer(({ server }) => (
   <div>
     <div>Your hand</div>
     <div>
-      {(server.data.hand || []).map((h, i) => <div key={i}>{h}</div>)}
+      {(server.hand || []).map((h, i) => <div key={i}>{h}</div>)}
     </div>
   </div>
 )))
