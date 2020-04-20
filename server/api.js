@@ -68,11 +68,36 @@ io.on('connection', socket => {
   let myRoom = ''
   socket.on('create-room', (userName, deck) => {
     console.log('create-room', userName, deck)
+    if (!userName || userName === '') {
+      socket.emit('error-msg', 'Wrong username')
+      return
+    }
     myRoom = createRoom(createUser(userName, socket), deck).name
     socket.emit('change-page', {
       page: 'lobby',
       data: rooms[myRoom].toClient()
     })
+  })
+  socket.on('join-room', (roomName, userName) => {
+    console.log('join-room', roomName, userName)
+    if (!rooms[roomName]) {
+      socket.emit('error-msg', 'Room doesn\'t exists')
+      return
+    }
+    if (!userName || userName === '') {
+      socket.emit('error-msg', 'Wrong username')
+      return
+    }
+    if (rooms[roomName].users.filter(u => u.name === userName).length === 0) {
+      myRoom = roomName
+      socket.emit('change-page', {
+        page: 'lobby',
+        data: joinRoom(roomName, createUser(userName, socket))
+      })
+    } else {
+      socket.emit('error-msg', 'User already in use')
+    }
+    // add an event on disconnect
   })
   socket.on('launch-game', () => {
     rooms[myRoom].startGame()
@@ -88,19 +113,6 @@ io.on('connection', socket => {
   })
   socket.on('ready', u => {
     rooms[myRoom].setReady(u)
-  })
-  socket.on('join-room', (roomName, userName) => {
-    console.log('join-room', roomName, userName)
-    if (rooms[roomName].users.filter(u => u.name === userName).length === 0) {
-      myRoom = roomName
-      socket.emit('change-page', {
-        page: 'lobby',
-        data: joinRoom(roomName, createUser(userName, socket))
-      })
-    } else {
-      socket.emit('error-msg', 'User already in use')
-    }
-    // add an event on disconnect
   })
   socket.on('disconnect', () => console.log('Client disconnected'))
 

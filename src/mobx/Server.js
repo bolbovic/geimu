@@ -17,6 +17,10 @@ export default class Server {
       },
       get isReady () {
         return this.getUser(this.userName).ready
+      },
+      get numberOfAnswers () {
+        const nb = this.data.question ? this.data.question.split('_').length : 1
+        return nb > 1 ? nb - 1 : 1
       }
     })
     this.socket = socketIOClient('http://127.0.0.1:4001')

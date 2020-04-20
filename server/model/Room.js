@@ -41,10 +41,10 @@ class Room extends Cliented {
     })
   }
 
-  chooseAnswer (userName, answer) {
+  chooseAnswer (userName, answers) {
     const u = this.getUser(userName)
-    u.picked = answer
-    this.discard.push(u.hand.splice(u.hand.indexOf(answer), 1, this.whiteCards.shift()))
+    u.picked = answers
+    answers.forEach(a => this.discard.push(u.hand.splice(u.hand.indexOf(a), 1, this.whiteCards.shift())))
     if (this.everyonePicked) {
       this.users.forEach(u => u.changePage('answers', this.getWaitingUpdate(u)))
     } else {
@@ -93,7 +93,7 @@ class Room extends Cliented {
       console.log('next-question', u.name, this.picker.name)
       if (this.picker.name === u.name) {
         u.changePage('pick-question', {
-          questions: this.questions.splice(0, 2)
+          questions: this.questions.splice(0, 5)
         })
       } else {
         u.changePage('scoreboard', this.getWaitingUpdate(u))
@@ -102,7 +102,7 @@ class Room extends Cliented {
   }
 
   pickNextUser () {
-    this.idxUser++
+    this.idxUser = (this.idxUser + 1) % this.users.length
   }
 
   getUser (name) {
