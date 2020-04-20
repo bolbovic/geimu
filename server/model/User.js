@@ -25,6 +25,9 @@ class User extends Cliented {
   reconnect (socket, data) {
     this.socket = socket
     this.disconnected = false
+  }
+
+  reconnectPage (data) {
     this.changePage(this.lastPage, data)
   }
 

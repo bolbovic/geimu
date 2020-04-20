@@ -14,7 +14,7 @@ todo
 - -add real cards and picking cards system-
 - -handle 2/3 cards selection-
 - add design
-- handle disconnections
+- -handle disconnections-
 - handle kicks
 - handle switch to spectator
 - -add different kind of card sets-

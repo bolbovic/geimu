@@ -151,11 +151,12 @@ class Room extends Cliented {
   tryReconnect (u, socket) {
     const user = this.getUser(u)
     if (user.disconnected === true) {
+      user.reconnect(socket)
       this.users.forEach(u => {
         if (u.name !== user.name) {
           u.update(this.getUpdate(u))
         } else {
-          u.reconnect(socket, this.getUpdate(u))
+          user.reconnectPage(this.getUpdate(u))
         }
       })
       return true

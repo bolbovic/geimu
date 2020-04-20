@@ -2,7 +2,7 @@ import React from 'react'
 import { inject, observer } from 'mobx-react'
 
 const Score = ({ user }) => (
-  <div style={{ color: user.ready ? 'blue' : 'black' }}>
+  <div style={{ color: user.disconnected ? 'red' : user.ready ? 'blue' : 'black' }}>
     {user.name} - {user.score}
   </div>
 )
