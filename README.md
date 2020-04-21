@@ -17,6 +17,7 @@ todo
 - ~~handle disconnections~~
 - handle kicks
 - handle switch to spectator
+- handle striking answers (to say we don't want to choose them)
 - ~~add different kind of card sets~~
 - add spectate mode for people who wants to join next turn
 - giving the possibility to people to use their own decks
