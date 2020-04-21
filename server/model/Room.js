@@ -13,6 +13,8 @@ class Room extends Cliented {
     this.blackCards = shuffle(deck.blackCards)
     this.whiteCards = shuffle(deck.whiteCards)
     this.discard = []
+    this.picker = null
+    this.winner = null
   }
 
   addUser (user) {
@@ -133,7 +135,7 @@ class Room extends Cliented {
       choices: this.choices,
       master: this.master.toClient(),
       name: this.name,
-      picker: this.picker.toClient(),
+      picker: this.picker ? this.picker.toClient() : null,
       question: this.question,
       users: this.users.map(uu => uu.toClient()),
       winner: this.winner ? this.winner.toClient() : null
