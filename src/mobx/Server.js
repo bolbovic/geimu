@@ -7,7 +7,7 @@ export default class Server {
       currentPage: '',
       data: {},
       decks: null,
-      error: null,
+      error: '',
       serverReady: false,
       get isMaster () {
         return this.data.master && this.userName === this.data.master.name
@@ -82,6 +82,10 @@ export default class Server {
       if (name === u.name) uu = u
     })
     return uu
+  }
+
+  hideNotification () {
+    this.error = null
   }
 
   createRoom (userName, deck) {

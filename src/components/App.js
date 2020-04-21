@@ -5,10 +5,7 @@ import Outer from './pages/Outer'
 import Router from './Router'
 
 import '../styles/components/App.css'
-
-const Error = inject('server')(observer(({ server }) => server.error ? (
-  <div className='error'>{server.error}</div>
-) : null))
+import Error from './Error'
 
 class App extends React.Component {
   constructor () {

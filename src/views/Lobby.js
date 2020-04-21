@@ -8,6 +8,6 @@ export default inject('server')(observer(({ server }) => (
     <div>
       {(server.data.users || []).map((u, i) => <div key={i}>{u.name}</div>)}
     </div>
-    {server.isMaster && server.data.users && server.data.users.length > 3 ? <button onClick={() => server.launchGame()}>Launch</button> : null}
+    {server.isMaster && server.data.users && server.data.users.length > 2 ? <button onClick={() => server.launchGame()}>Launch</button> : null}
   </div>
 )))
