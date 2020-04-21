@@ -1,6 +1,7 @@
 const express = require('express')
 const http = require('http')
 const socketIo = require('socket.io')
+const path = require('path')
 
 const rawDecks = require('../games/raw.json')
 
@@ -9,16 +10,18 @@ const availableDecks = [
   { name: 'All CAU', decks: rawDecks.order.slice(0, 30) }
 ].concat(rawDecks.order.map(o => ({ name: rawDecks[o].name, decks: [o] })))
 
-console.log(availableDecks)
-
 const Room = require('./model/Room')
 const User = require('./model/User')
 
 const port = process.env.PORT || 4001
-const index = require('./routes/index')
+// const index = require('./routes/index')
 
 const app = express()
-app.use(index)
+// app.use(index)
+app.use(express.static(path.join(__dirname, '..', '/build')))
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', '/index.html'))
+})
 
 const server = http.createServer(app)
 

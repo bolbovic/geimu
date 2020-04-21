@@ -32,7 +32,7 @@ export default class Server {
         return this.data.self ? this.data.self.hand : []
       }
     })
-    this.socket = socketIOClient('http://127.0.0.1:4001')
+    this.socket = socketIOClient(process.env.REACT_APP_API_SERVER)
     this.socket.on('connect', () => {
       console.log('just got connected')
       // checked if in a middle of a game
@@ -70,6 +70,10 @@ export default class Server {
       this.decks = decks
     })
     this.socket.on('error-msg', error => { this.error = error })
+    this.socket.on('disconnect', reason => {
+      this.currentPage = ''
+      this.error = 'Disconnected from server'
+    })
   }
 
   getUser (name) {
