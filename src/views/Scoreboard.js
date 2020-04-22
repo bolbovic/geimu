@@ -10,7 +10,7 @@ export default inject('server')(observer(({ server }) => (
     <Title>Scoreboard</Title>
     <div>{`Waiting for ${server.picker.name} to pick a question.`}</div>
     <div style={{ width: '80%' }}>
-      {(server.data.users || []).map((u, i) => <User key={i} user={u} />)}
+      {(server.data.users || []).map((u, i) => <User key={i} user={u} showScore />)}
     </div>
   </FlexCM>
 )))

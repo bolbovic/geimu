@@ -5,7 +5,6 @@ import styled from 'styled-components'
 import { Button } from '../components/styles/Form'
 import { FlexCM } from '../components/styles/Flex'
 import { Title } from '../components/styles/Texts'
-import Hand from '../components/Hand'
 
 const Questions = styled(FlexCM)`
   div {
@@ -20,12 +19,6 @@ const B = styled(Button)`
   height: auto;
   padding: 15px;
   width: 100%;
-`
-
-const Answer = styled.span`
-  color: #dc322f;
-  font-size: large;
-  font-weight: bolder;
 `
 
 const Question = inject('server')(({ question, server }) => (

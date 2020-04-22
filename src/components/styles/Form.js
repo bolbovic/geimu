@@ -10,6 +10,10 @@ export const Button = styled.button`
   text-decoration: none;
   text-transform: uppercase;
   width: 120px;
+  &:disabled {
+    background: #6c71c4;
+    color: #839496;
+  }
 `
 
 export const ButtonOutline = styled(Button)`

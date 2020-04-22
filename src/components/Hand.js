@@ -21,7 +21,7 @@ const Hand = styled(FlexC)`
   }
 `
 
-const Card = styled(Button)`
+const CardStyle = styled(Button)`
   background: #586e75;
   color: #fdf6e3;
   border-bottom-left-radius: 0;
@@ -29,7 +29,16 @@ const Card = styled(Button)`
   border: 2px solid #fdf6e3;
   border-bottom: none;
   width: 100%;
+  &:disabled {
+    background: #586e75;
+    color: #839496;
+    cursor: default;
+  }
 `
+
+const Card = ({ card, disabled, onClick, selectionId }) => (
+  <CardStyle style={selectionId !== -1 ? { color: '#b58900'} : null} onClick={onClick} disabled={disabled}>{`${card}${selectionId !== -1 ? ` [${selectionId + 1}]` : ''}`}</CardStyle>
+)
 
 const ShowHide = styled.div`
   border: 2px solid #b58900;
@@ -47,11 +56,15 @@ export default inject('server')(observer(({ server }) => {
   return server.hand.length > 0 ? (
     <Hand>
       <ShowHide onClick={() => setShow(!show)}>{show ? 'Hide cards' : 'Show cards'}</ShowHide>
-      {show ? (
-        <>
-          {(server.hand || []).map((h, i) => <Card key={i}>{h}</Card>)}
-        </>
-      ) : null}
+      {show ? (server.hand || []).map((c, i) => (
+        <Card
+          card={c}
+          disabled={server.currentPage !== 'pick-answer'}
+          key={i}
+          onClick={() => server.answerClicked(c)}
+          selectionId={server.answers.indexOf(c)}
+        />
+      )) : null}
     </Hand>
   ) : null
 }))

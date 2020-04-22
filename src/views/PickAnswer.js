@@ -1,22 +1,43 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { inject, observer } from 'mobx-react'
+import styled from 'styled-components'
 
-const Answer = ({ answer, idx, onClick, server }) => (
-  <button onClick={() => onClick(answer)} disabled={idx !== -1}>{`${idx !== -1 ? `[${idx + 1}] ` : ''}${answer}`}</button>
-)
+import { Button, ButtonOulineRM } from '../components/styles/Form'
+import { Centered, Title } from '../components/styles/Texts'
+import { FlexCM, FlexH } from '../components/styles/Flex'
+
+const Answer = styled.span`
+  color: #dc322f;
+  font-size: large;
+  font-weight: bolder;
+`
+const Question = styled(Centered)`
+  padding: 10px;
+`
+
+const FilledQuestion = ({ question, answers }) => {
+  let filledQuestion = question
+  if (question.split('_').length === 1) {
+    filledQuestion += ' _'
+  }
+  const parts = filledQuestion.split('_')
+  console.log(filledQuestion, parts)
+  const fixedAnswers = answers.map(a => a[a.length - 1] === '.' ? a.slice(0, -1) : a)
+
+  return <Question>{parts.map((p, i) => <span key={i}>{p}{i !== parts.length - 1 ? fixedAnswers[i] ? <Answer>{fixedAnswers[i]}</Answer> : '_' : null}</span>)}</Question>
+}
 
 export default inject('server')(observer(({ server }) => {
-  const [answers, setAnswers] = useState([])
-  const addAnswer = a => { setAnswers(answers.concat([a])) }
+  const m = server.numberOfAnswers > 1
   return (
-    <div>
-      <div>Pick Answer(s) for this question</div>
-      <div>{server.data.question}</div>
-      <div>
-        {(server.hand || []).map((a, i) => <Answer key={i} answer={a} idx={answers.indexOf(a)} onClick={a => addAnswer(a)} />)}
-      </div>
-      <button disabled={answers.length !== server.numberOfAnswers} onClick={() => server.chooseAnswer(answers)}>Confirm</button>
-      <button onClick={() => setAnswers([])}>Reset</button>
-    </div>
+    <FlexCM>
+      <Title>Pick Answer(s)</Title>
+      <div>{`Please choose ${m ? 'cards' : 'a card'} to fill the blank${m ? 's' : ''}!`}</div>
+      <FilledQuestion question={server.question} answers={server.answers} />
+      <FlexH>
+        <ButtonOulineRM onClick={() => server.resetAnswers()}>Reset</ButtonOulineRM>
+        <Button disabled={server.answers.length !== server.numberOfAnswers} onClick={() => server.chooseAnswers()}>Confirm</Button>
+      </FlexH>
+    </FlexCM>
   )
 }))

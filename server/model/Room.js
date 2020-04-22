@@ -29,6 +29,7 @@ class Room extends Cliented {
 
   chooseQuestion (q) {
     this.question = q
+    this.picker.picked = q
     this.users.forEach(u => {
       console.log('choose-question', u.name, this.picker.name)
       if (this.picker.name === u.name) {

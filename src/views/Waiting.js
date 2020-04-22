@@ -1,11 +1,12 @@
 import React from 'react'
-import { inject, observer } from 'mobx-react'
 
-export default inject('server')(observer(({ server }) => (
-  <div>
-    <div>Waiting for players</div>
-    <div>
-      {(server.data.users || []).map((u, i) => <div key={i}>{u.name} - {(server.data.picker && server.data.picker.name === u.name) || u.picked ? 'OK' : 'Waiting...'}</div>)}
-    </div>
-  </div>
-)))
+import { FlexCM } from '../components/styles/Flex'
+import { Title } from '../components/styles/Texts'
+import Users from '../components/Users'
+
+export default () => (
+  <FlexCM>
+    <Title>Waiting for players</Title>
+    <Users showPicked />
+  </FlexCM>
+)

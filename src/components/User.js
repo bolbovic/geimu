@@ -16,9 +16,10 @@ const Small = styled.span`
   padding-left: 5px;
 `
 
-export default ({ user }) => (
+export default ({ showScore, showPicked, showReady, user }) => (
   <User>
     <FlexH>{user.name}{user.disconnected ? <Small>- disconnected</Small> : null}</FlexH>
-    <div>{user.score}</div>
+    {showScore ? <div>{user.score}</div> : null}
+    {showPicked ? <div>{user.picked ? 'OK' : 'Answering...'}</div> : null}
   </User>
 )

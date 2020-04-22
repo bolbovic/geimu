@@ -4,6 +4,7 @@ import socketIOClient from 'socket.io-client'
 export default class Server {
   constructor () {
     extendObservable(this, {
+      answers: [],
       currentPage: '',
       data: {},
       decks: null,
@@ -33,6 +34,9 @@ export default class Server {
       },
       get picker () {
         return this.data.picker || {}
+      },
+      get question () {
+        return this.data.question || ''
       }
     })
     this.socket = socketIOClient(process.env.REACT_APP_API_SERVER)
@@ -109,8 +113,9 @@ export default class Server {
     this.socket.emit('choose-question', q)
   }
 
-  chooseAnswer (a) {
-    this.socket.emit('choose-answer', this.userName, a)
+  chooseAnswers () {
+    this.socket.emit('choose-answer', this.userName, this.answers)
+    this.answers = []
   }
 
   pickAnswer (u) {
@@ -119,5 +124,18 @@ export default class Server {
 
   ready () {
     this.socket.emit('ready', this.userName)
+  }
+
+  answerClicked (card) {
+    const idx = this.answers.indexOf(card)
+    if (idx !== -1) {
+      this.answers.splice(idx, 1)
+    } else {
+      this.answers.push(card)
+    }
+  }
+
+  resetAnswers () {
+    this.answers = []
   }
 }
