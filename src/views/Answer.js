@@ -8,7 +8,17 @@ import { Title } from '../components/styles/Texts'
 import FilledQuestion from '../components/FilledQuestion'
 
 const Questions = styled(FlexCM)`
+  justify-content: end;
   overflow-y: auto;
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #657b83; 
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #93a1a1; 
+  }
   > div {
     width: 80%;
   }

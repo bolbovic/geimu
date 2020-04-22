@@ -1,5 +1,4 @@
 import { extendObservable } from 'mobx'
-import { shuffle } from 'lodash'
 import socketIOClient from 'socket.io-client'
 
 export default class Server {
@@ -9,9 +8,10 @@ export default class Server {
       currentPage: '',
       data: {},
       decks: null,
-      error: '',
+      error: null,
+      info: null,
+      showingHand: false,
       serverReady: false,
-      shuffledUsers: [],
       get choices () {
         return this.data.choices || []
       },
@@ -48,6 +48,9 @@ export default class Server {
       },
       get winner () {
         return this.data.winner || {}
+      },
+      get shuffledUsers () {
+        return this.data.shuffledUsers || []
       }
     })
     this.socket = socketIOClient(process.env.REACT_APP_API_SERVER)
@@ -67,38 +70,33 @@ export default class Server {
       this.currentPage = data.page
       this.data = data.data
       this.serverReady = true
+      this.info = null
       this.error = null
       window.sessionStorage.setItem('room-name', this.roomName)
       window.sessionStorage.setItem('user-name', this.userName)
       if (data.page === 'answers') {
-        this.shuffledUsers = shuffle(this.data.users)
+        this.showingHand = false
       }
-      if (data.page === 'results') {
-        this.shuffledUsers = []
+      if (data.page === 'pick-answer') {
+        this.showingHand = true
       }
     })
     this.socket.on('error-reconnect', msg => {
       this.serverReady = true
 
       this.error = msg
-      this.currentPage = ''
-      this.data = {}
-      this.answers = []
-      this.shuffledUsers = []
-
-      window.sessionStorage.removeItem('room-name')
-      window.sessionStorage.removeItem('user-name')
+      this.reset()
     })
     this.socket.on('new-data', data => {
       console.log('new-data received...', data)
       this.data = data
-      this.error = null
     })
     this.socket.on('available-decks', decks => {
       console.log('available-decks received...', decks)
       this.decks = decks
     })
     this.socket.on('error-msg', error => { this.error = error })
+    this.socket.on('info-msg', info => { this.info = info })
     this.socket.on('disconnect', reason => {
       this.currentPage = ''
       this.error = 'Disconnected from server'
@@ -115,6 +113,10 @@ export default class Server {
 
   hideNotification () {
     this.error = null
+  }
+
+  hideInfo () {
+    this.info = null
   }
 
   createRoom (userName, deck) {
@@ -161,7 +163,21 @@ export default class Server {
     this.answers = []
   }
 
+  reset () {
+    this.currentPage = ''
+    this.data = {}
+    this.answers = []
+    this.showingHand = false
+    window.sessionStorage.removeItem('room-name')
+    window.sessionStorage.removeItem('user-name')
+  }
+
   stop () {
     this.socket.emit('quit-game')
+    this.reset()
+  }
+
+  toggleHand () {
+    this.showingHand = !this.showingHand
   }
 }

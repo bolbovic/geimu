@@ -13,7 +13,11 @@ const Questions = styled(FlexCM)`
 `
 
 const Question = inject('server')(({ onClick, question, selected, server }) => (
-  <QuestionButton className={selected ? 'selected' : ''} onClick={onClick}>{question}</QuestionButton>
+  <QuestionButton
+    className={selected ? 'selected' : ''}
+    dangerouslySetInnerHTML={{ __html: question }}
+    onClick={onClick}
+  />
 ))
 
 export default inject('server')(observer(({ server }) => {

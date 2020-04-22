@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { inject } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styled from 'styled-components'
 
@@ -33,7 +33,7 @@ const Content = styled(FlexCM)`
   width: 80%;
 `
 
-export default inject('server')(({ server }) => {
+export default inject('server')(observer(({ server }) => {
   const [show, setShow] = useState(false)
   return server.roomName ? (
     <>
@@ -41,16 +41,14 @@ export default inject('server')(({ server }) => {
       <Modal className={show ? 'show' : ''}>
         <Content>
           <FlexCM>
-            <div>Are you sure you want to disband the game?</div>
-            <div>Everyone will be kicked out of the game.</div>
-            <div>And they'll know you did it ;)</div>
+            <div>Are you sure you want to quit the game, loser?</div>
           </FlexCM>
           <FlexH>
             <ButtonOulineRM onClick={() => setShow(false)}>Nevermind</ButtonOulineRM>
-            <Button onClick={() => { server.stop(); setShow(false) }}>Yup.</Button>
+            <Button onClick={() => { server.stop(); setShow(false) }}>Yup</Button>
           </FlexH>
         </Content>
       </Modal>
     </>
   ) : null
-})
+}))

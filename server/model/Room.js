@@ -15,14 +15,32 @@ class Room extends Cliented {
     this.discard = []
     this.picker = null
     this.winner = null
+    this.shuffledUsers = []
+    this.waitingPhase = null
+    this.gameStarted = false
+    this.whereToSendNewUser = 'lobby'
   }
 
-  addUser (user) {
+  userJoins (user) {
     this.users.push(user)
+    user.hand = this.whiteCards.splice(0, 7)
     this.users.forEach(u => {
-      if (user.name !== u.name) {
-        console.log('emiting to...', u.name)
-        u.update(this.toClient())
+      if (this.gameStarted) {
+        if (user.name !== u.name) {
+          u.update(this.getUpdate(u))
+          u.sendInfo(`${user.name} joined!`)
+        } else {
+          u.changePage(this.whereToSendNewUser, this.getUpdate())
+          if (this.waitingPhase) {
+            this.letsContinue()
+          }
+        }
+      } else {
+        if (user.name !== u.name) {
+          u.update(this.toClient())
+        } else {
+          u.changePage('lobby', this.toClient())
+        }
       }
     })
   }
@@ -30,6 +48,8 @@ class Room extends Cliented {
   chooseQuestion (q) {
     this.question = q
     this.picker.picked = q
+    this.waitingPhase = 'picking'
+    this.whereToSendNewUser = 'pick-answer'
     this.users.forEach(u => {
       console.log('choose-question', u.name, this.picker.name)
       if (this.picker.name === u.name) {
@@ -43,24 +63,16 @@ class Room extends Cliented {
   chooseAnswer (userName, answers) {
     const u = this.getUser(userName)
     u.picked = answers
+    u.changePage('waiting-answers', this.getUpdate(u))
     answers.forEach(a => this.discard.push(u.hand.splice(u.hand.indexOf(a), 1, this.whiteCards.shift())))
-    if (this.everyonePicked) {
-      this.users.forEach(u => u.changePage('answers', this.getUpdate(u)))
-    } else {
-      const us = this.getWaitingUsers()
-      us.forEach(u => {
-        if (u.name === userName) {
-          u.changePage('waiting-answers', this.getUpdate(u))
-        } else {
-          u.update(this.getUpdate(u))
-        }
-      })
-    }
+    this.letsContinue()
   }
 
   pickAnswer (u) {
     this.winner = this.getUser(u)
     this.winner.won(this.question)
+    this.waitingPhase = 'ready'
+    this.whereToSendNewUser = 'results'
     this.users.forEach(u => {
       u.changePage('results', this.getUpdate(u))
     })
@@ -68,14 +80,35 @@ class Room extends Cliented {
 
   setReady (u) {
     this.getUser(u).ready = true
-    if (this.everyoneReady) {
-      this.nextQuestion()
-    } else {
-      this.users.forEach(u => u.update(this.getUpdate(u)))
+    this.letsContinue()
+  }
+
+  letsContinue () {
+    console.log('lets continue ', this.waitingPhase)
+    if (this.waitingPhase === 'picking') {
+      if (this.everyonePicked) {
+        this.waitingPhase = null
+        this.shuffledUsers = shuffle(this.users)
+        this.whereToSendNewUser = 'answers'
+        this.users.forEach(u => u.changePage('answers', this.getUpdate(u)))
+      } else {
+        const us = this.getWaitingUsers()
+        us.forEach(u => {
+          u.update(this.getUpdate(u))
+        })
+      }
+    } else if (this.waitingPhase === 'ready') {
+      if (this.everyoneReady) {
+        this.waitingPhase = null
+        this.nextQuestion()
+      } else {
+        this.users.forEach(u => u.update(this.getUpdate(u)))
+      }
     }
   }
 
   startGame () {
+    this.gameStarted = true
     this.users.forEach(u => {
       u.hand = this.whiteCards.splice(0, 7)
     })
@@ -87,10 +120,10 @@ class Room extends Cliented {
     this.picker = this.users[this.idxUser]
     this.picked = {}
     this.winner = null
+    this.whereToSendNewUser = 'scoreboard'
     this.choices = this.blackCards.splice(0, 3)
     this.users.forEach(u => {
       u.resetRound()
-      console.log('next-question', u.name, this.picker.name)
       if (this.picker.name === u.name) {
         u.changePage('pick-question', this.getUpdate(u))
       } else {
@@ -138,7 +171,10 @@ class Room extends Cliented {
       name: this.name,
       picker: this.picker ? this.picker.toClient() : null,
       question: this.question,
+      shuffledUsers: this.shuffledUsers.map(uu => uu.toClient()),
       users: this.users.map(uu => uu.toClient()),
+      blackCardsLeft: this.blackCards.length,
+      whiteCardsLeft: this.whiteCards.length,
       winner: this.winner ? this.winner.toClient() : null
     }
   }
@@ -153,7 +189,7 @@ class Room extends Cliented {
 
   tryReconnect (u, socket) {
     const user = this.getUser(u)
-    if (user.disconnected === true) {
+    if (user && user.disconnected === true) {
       user.reconnect(socket)
       this.users.forEach(u => {
         if (u.name !== user.name) {
@@ -176,6 +212,26 @@ class Room extends Cliented {
         u.update(this.getUpdate(u))
       }
     })
+  }
+
+  quit (userName) {
+    const u = this.getUser(userName)
+    this.users.splice(this.users.indexOf(u), 1)
+    this.users.forEach(u => u.sendInfo(`${userName} has left the game`))
+    if (this.master.name === u.name) {
+      this.master = this.users[0]
+    }
+    if (this.users.length < 3) {
+      this.gameStarted = false
+      this.users.forEach(uu => uu.changePage('lobby', this.toClient()))
+    } else if (this.picker.name === userName) {
+      this.idxUser -= 1
+      this.nextQuestion()
+    } else if (this.waitingPhase) {
+      this.letsContinue()
+    } else {
+      this.users.forEach(u => u.update(this.getUpdate(u)))
+    }
   }
 
   disband (userName) {

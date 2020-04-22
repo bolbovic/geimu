@@ -11,6 +11,7 @@ class User extends Cliented {
     this.picked = null
     this.ready = false
     this.disconnected = false
+    this.lastPage = 'lobby'
   }
 
   changePage (page, data) {
@@ -20,6 +21,14 @@ class User extends Cliented {
 
   update (data) {
     !this.disconnected && this.socket.emit('new-data', this.myData(data))
+  }
+
+  sendError (err) {
+    !this.disconnected && this.socket.emit('error-msg', err)
+  }
+
+  sendInfo (err) {
+    !this.disconnected && this.socket.emit('info-msg', err)
   }
 
   reconnect (socket, data) {

@@ -27,7 +27,7 @@ export default ({ showScore, showPicked, showReady, user }) => (
   <User>
     <UserName>{user.name}{user.disconnected ? <Small>- disconnected</Small> : null}</UserName>
     {showScore ? <div>{user.score}</div> : null}
-    {showPicked ? <div>{user.picked ? 'OK' : 'Answering...'}</div> : null}
+    {showPicked ? <FontAwesomeIcon spin={!user.picked} icon={user.picked ? 'check-circle' : 'spinner'} /> : null}
     {showReady ? <FontAwesomeIcon spin={!user.ready} icon={user.ready ? 'check-circle' : 'spinner'} /> : null}
   </User>
 )

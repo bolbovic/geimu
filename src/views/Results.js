@@ -10,7 +10,7 @@ import Users from '../components/Users'
 export default inject('server')(observer(({ server }) => (
   <FlexCM>
     <Title>Results</Title>
-    <div>{`${server.picker.name || ''} choosed...`}</div>
+    <div>{`${server.picker.name || ''} chose...`}</div>
     <FilledQuestion question={server.question} answers={server.winner.picked || []} />
     <Title>{`Congrats ${server.winner.name || ''}!!!`}</Title>
     <Users showScore showReady />

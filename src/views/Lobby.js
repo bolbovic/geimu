@@ -39,7 +39,7 @@ const TextPad20 = styled.div`
 
 export default inject('server')(observer(({ server }) => (
   <FlexCM>
-    <Title>Welcome to</Title>
+    <div>Welcome to</div>
     <Title>Bolbo Geimuzu</Title>
     <TextPad20>You might want to share the following code to your friends so they can play with you that magnificent game.<br />Have fun ;)</TextPad20>
     <RoomCode>{server.data.name}</RoomCode>

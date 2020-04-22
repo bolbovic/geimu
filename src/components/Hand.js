@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { inject, observer } from 'mobx-react'
 import styled from 'styled-components'
 
@@ -28,6 +28,7 @@ const CardStyle = styled(Button)`
   border-bottom-right-radius: 0;
   border: 2px solid #fdf6e3;
   border-bottom: none;
+  max-width: 500px;
   width: 100%;
   &:disabled {
     background: #586e75;
@@ -46,6 +47,7 @@ const Card = ({ card, disabled, onClick, selectionId }) => (
 )
 
 const ShowHide = styled.div`
+  background: #073642;
   border: 2px solid #b58900;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
@@ -57,11 +59,10 @@ const ShowHide = styled.div`
 `
 
 export default inject('server')(observer(({ server }) => {
-  const [show, setShow] = useState(true)
   return server.hand.length > 0 ? (
     <Hand>
-      <ShowHide onClick={() => setShow(!show)}>{show ? 'Hide cards' : 'Show cards'}</ShowHide>
-      {show ? (server.hand || []).map((c, i) => (
+      <ShowHide onClick={() => server.toggleHand()}>{server.showingHand ? 'Hide cards' : 'Show cards'}</ShowHide>
+      {server.showingHand ? (server.hand || []).map((c, i) => (
         <Card
           card={c}
           disabled={server.currentPage !== 'pick-answer'}

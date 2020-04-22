@@ -45,7 +45,7 @@ const JoinGame = inject('server')(({ back, server }) => {
       </FlexCM>
       <FlexCM>
         <Label>Room ID</Label>
-        <Input onChange={e => setRoomName(e.target.value)} value={roomName} name='roomName' type='text' />
+        <Input onChange={e => setRoomName(e.target.value.toUpperCase())} value={roomName} name='roomName' type='text' />
       </FlexCM>
       <FlexH>
         <ButtonOulineRM onClick={back}>Back</ButtonOulineRM>
