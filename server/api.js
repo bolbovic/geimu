@@ -101,7 +101,7 @@ io.on('connection', socket => {
       socket.emit('error-msg', 'Wrong username')
       return
     }
-    if (rooms[roomName].users.filter(u => u.name === userName).length === 0) {
+    if (!rooms[roomName].getUser(userName)) {
       myRoom = roomName
       myUserName = userName
       socket.emit('change-page', {
@@ -109,7 +109,11 @@ io.on('connection', socket => {
         data: joinRoom(roomName, createUser(userName, socket))
       })
     } else {
-      socket.emit('error-msg', 'User already in use')
+      if (rooms[roomName].getUser(userName).disconnected) {
+        rooms[roomName].tryReconnect(userName, socket)
+      } else {
+        socket.emit('error-msg', 'User already in use')
+      }
     }
     // add an event on disconnect
   })
@@ -127,6 +131,9 @@ io.on('connection', socket => {
   })
   socket.on('ready', u => {
     rooms[myRoom].setReady(u)
+  })
+  socket.on('quit-game', () => {
+    rooms[myRoom].disband(myUserName)
   })
   socket.on('try-reconnect', (r, u) => {
     console.log('try-reconnecting', r, u)

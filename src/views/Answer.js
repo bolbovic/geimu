@@ -2,36 +2,22 @@ import React, { useState } from 'react'
 import { inject, observer } from 'mobx-react'
 import styled from 'styled-components'
 
-import { Button } from '../components/styles/Form'
+import { Button, QuestionButton } from '../components/styles/Form'
 import { FlexCM } from '../components/styles/Flex'
 import { Title } from '../components/styles/Texts'
 import FilledQuestion from '../components/FilledQuestion'
 
-const B = styled.div`
-  background: #eee8d5;
-  border-radius: 10px;
-  border: 4px solid #eee8d5;
-  box-sizing: border-box;
-  color: #268bd2;
-  height: auto;
-  width: 100%;
-  &.selected {
-    border-color: #d33682;
-  }
-`
-
 const Questions = styled(FlexCM)`
+  overflow-y: auto;
   > div {
     width: 80%;
   }
 `
 
 const Answer = inject('server')(({ answers, onClick, question, selected, user }) => (
-  <div>
-    <B onClick={onClick} className={selected ? 'selected' : ''}>
-      <FilledQuestion question={question} answers={answers} />
-    </B>
-  </div>
+  <QuestionButton onClick={onClick} className={selected ? 'selected' : ''}>
+    <FilledQuestion question={question} answers={answers} />
+  </QuestionButton>
 ))
 
 export default inject('server')(observer(({ server }) => {
@@ -52,18 +38,18 @@ export default inject('server')(observer(({ server }) => {
       <div>{server.isPicker ? 'Pick an answer for your question' : 'Waiting for the picker to choose an answer...'}</div>
       <div>{server.data.question}</div>
       <Questions>
-        {server.shuffledUsers.map((u, i) => u.picked ? (
+        {server.shuffledUsers.map((u, i) => Array.isArray(u.picked) ? (
           <Answer
             key={i}
-            answers={u.picked}
-            onClick={() => handlingClick(u)}
+            answers={u.picked || []}
+            onClick={server.isPicker ? () => handlingClick(u) : null}
             question={server.question}
             selected={selected.indexOf(u) !== -1}
             user={u}
           />
         ) : null)}
       </Questions>
-      <Button onClick={() => server.pickAnswer(selected[0])} disabled={selected.length !== 1}>Confirm</Button>
+      {server.isPicker ? <Button onClick={() => server.pickAnswer(selected[0])} disabled={selected.length !== 1}>Confirm</Button> : null}
     </FlexCM>
   )
 }))

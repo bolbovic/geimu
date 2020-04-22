@@ -11,14 +11,24 @@ font-weight: bolder;
 const Question = styled(Centered)`
 padding: 10px;
 `
+const Dq = ({ children }) => <span dangerouslySetInnerHTML={{ __html: children }} />
+const Da = ({ children }) => <Answer dangerouslySetInnerHTML={{ __html: children }} />
 
 export default ({ question, answers }) => {
   let filledQuestion = question
   if (question.split('_').length === 1) {
-    filledQuestion += ' _'
+    filledQuestion += '<br />_'
   }
   const parts = filledQuestion.split('_')
   const fixedAnswers = answers.map(a => a[a.length - 1] === '.' ? a.slice(0, -1) : a)
 
-  return <Question>{parts.map((p, i) => <span key={i}>{p}{i !== parts.length - 1 ? fixedAnswers[i] ? <Answer>{fixedAnswers[i]}</Answer> : '_' : null}</span>)}</Question>
+  return (
+    <Question>{parts.map((p, i) => (
+      <span key={i}>
+        <Dq>{p}</Dq>
+        {i !== parts.length - 1 ? fixedAnswers[i] ? <Da>{fixedAnswers[i]}</Da> : '_' : null}
+      </span>
+    ))}
+    </Question>
+  )
 }

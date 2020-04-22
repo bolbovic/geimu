@@ -177,6 +177,12 @@ class Room extends Cliented {
       }
     })
   }
+
+  disband (userName) {
+    this.users.forEach(u => {
+      u.socket.emit('error-reconnect', `Game disbanded by ${userName}`)
+    })
+  }
 }
 
 module.exports = Room

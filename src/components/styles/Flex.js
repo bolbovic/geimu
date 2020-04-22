@@ -16,6 +16,7 @@ export const FlexC = styled(Flex)`
 `
 
 export const FlexCM = styled(FlexC)`
+  overflow: hidden;
   > div {
     margin-bottom: 20px;
   }
@@ -24,6 +25,6 @@ export const FlexCM = styled(FlexC)`
   }
 `
 
-export const FlexCCM = styled(FlexC)`
+export const FlexCCM = styled(FlexCM)`
   height: 100%;
 `

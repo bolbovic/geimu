@@ -6,7 +6,7 @@ import { Button } from './styles/Form'
 import { FlexC } from './styles/Flex'
 
 const Hand = styled(FlexC)`
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
   button {
@@ -37,7 +37,12 @@ const CardStyle = styled(Button)`
 `
 
 const Card = ({ card, disabled, onClick, selectionId }) => (
-  <CardStyle style={selectionId !== -1 ? { color: '#b58900'} : null} onClick={onClick} disabled={disabled}>{`${card}${selectionId !== -1 ? ` [${selectionId + 1}]` : ''}`}</CardStyle>
+  <CardStyle
+    dangerouslySetInnerHTML={{ __html: `${card}${selectionId !== -1 ? ` [${selectionId + 1}]` : ''}` }}
+    disabled={disabled}
+    onClick={onClick}
+    style={selectionId !== -1 ? { color: '#b58900' } : null}
+  />
 )
 
 const ShowHide = styled.div`

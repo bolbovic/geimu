@@ -25,3 +25,4 @@ todo
 - giving the possibility to people to use their own decks
 - handle some kind of settings
 - create other similar games
+- 

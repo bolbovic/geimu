@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { inject, observer } from 'mobx-react'
 
-import { FlexC, FlexCCM, FlexH } from '../components/styles/Flex'
+import { FlexCM, FlexCCM, FlexH } from '../components/styles/Flex'
 import { Button, ButtonOulineRM, Input, Label, Select } from '../components/styles/Form'
 
 const DeckSelect = ({ decks, onChange, selected }) => (
@@ -15,15 +15,15 @@ const NewGame = inject('server')(observer(({ back, server }) => {
   const [deck, setDeck] = useState(0)
   return (
     <FlexCCM>
-      <FlexC>
+      <FlexCM>
         <Label>Nickname</Label>
         <Input onChange={e => setUserName(e.target.value)} value={userName} name='userName' type='text' />
-      </FlexC>
+      </FlexCM>
       {server.decks ? (
-        <FlexC>
+        <FlexCM>
           <Label>Deck</Label>
           <DeckSelect decks={server.decks.map((d, i) => ({ name: d.name, value: i }))} onChange={d => setDeck(d)} selected={deck} />
-        </FlexC>
+        </FlexCM>
       ) : null}
       <FlexH>
         <ButtonOulineRM onClick={back}>Back</ButtonOulineRM>
@@ -39,14 +39,14 @@ const JoinGame = inject('server')(({ back, server }) => {
 
   return (
     <FlexCCM>
-      <FlexC>
+      <FlexCM>
         <Label>UserName</Label>
         <Input onChange={e => setUserName(e.target.value)} value={userName} name='userName' type='text' />
-      </FlexC>
-      <FlexC>
+      </FlexCM>
+      <FlexCM>
         <Label>Room ID</Label>
         <Input onChange={e => setRoomName(e.target.value)} value={roomName} name='roomName' type='text' />
-      </FlexC>
+      </FlexCM>
       <FlexH>
         <ButtonOulineRM onClick={back}>Back</ButtonOulineRM>
         <Button onClick={() => server.joinRoom(roomName, userName)}>Join Game</Button>
@@ -65,10 +65,10 @@ export default inject('server')(({ server }) => {
         : show === 'join'
           ? <JoinGame back={back} />
           : (
-            <FlexC>
+            <FlexCM>
               <Button style={{ marginBottom: '40px' }} onClick={() => setShow('new')}>New Game</Button>
               <Button onClick={() => setShow('join')}>Join Game</Button>
-            </FlexC>
+            </FlexCM>
           )}
     </FlexCCM>
   )

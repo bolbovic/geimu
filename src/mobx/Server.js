@@ -12,6 +12,9 @@ export default class Server {
       error: '',
       serverReady: false,
       shuffledUsers: [],
+      get choices () {
+        return this.data.choices || []
+      },
       get isMaster () {
         return this.data.master && this.userName === this.data.master.name
       },
@@ -21,30 +24,30 @@ export default class Server {
       get isReady () {
         return this.getUser(this.userName).ready
       },
-      get userName () {
-        return this.data.self ? this.data.self.name : ''
-      },
-      get roomName () {
-        return this.data.name
+      get hand () {
+        return this.data.self ? this.data.self.hand : []
       },
       get numberOfAnswers () {
         const nb = this.data.question ? this.data.question.split('_').length : 1
         return nb > 1 ? nb - 1 : 1
       },
-      get hand () {
-        return this.data.self ? this.data.self.hand : []
-      },
       get picker () {
         return this.data.picker || {}
-      },
-      get winner () {
-        return this.data.winner || {}
       },
       get question () {
         return this.data.question || ''
       },
+      get roomName () {
+        return this.data.name
+      },
+      get userName () {
+        return this.data.self ? this.data.self.name : ''
+      },
       get users () {
         return this.data.users || []
+      },
+      get winner () {
+        return this.data.winner || {}
       }
     })
     this.socket = socketIOClient(process.env.REACT_APP_API_SERVER)
@@ -76,8 +79,13 @@ export default class Server {
     })
     this.socket.on('error-reconnect', msg => {
       this.serverReady = true
+
       this.error = msg
       this.currentPage = ''
+      this.data = {}
+      this.answers = []
+      this.shuffledUsers = []
+
       window.sessionStorage.removeItem('room-name')
       window.sessionStorage.removeItem('user-name')
     })
@@ -151,5 +159,9 @@ export default class Server {
 
   resetAnswers () {
     this.answers = []
+  }
+
+  stop () {
+    this.socket.emit('quit-game')
   }
 }

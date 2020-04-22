@@ -1,6 +1,7 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 
+import Disband from './Disband'
 import Error from './Error'
 import Hand from './Hand'
 import Outer from './pages/Outer'
@@ -21,6 +22,7 @@ class App extends React.Component {
     const { server } = this.props
     return (
       <Outer>
+        <Disband />
         <Error />
         <Router page={server.currentPage} />
         <Hand />

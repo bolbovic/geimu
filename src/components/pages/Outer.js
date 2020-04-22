@@ -5,8 +5,7 @@ import { Flex } from '../styles/Flex'
 
 const Outer = styled(Flex)`
   box-sizing: border-box;
-  border: 1px solid #2aa198;
-  height: 100vh;
+  height: calc(100vh - 30px);
   max-width: 500px;
   margin: auto;
   position: relative;
