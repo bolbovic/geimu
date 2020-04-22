@@ -3,7 +3,6 @@ import { inject, observer } from 'mobx-react'
 
 import { FlexCM } from '../components/styles/Flex'
 import { Title } from '../components/styles/Texts'
-import Hand from '../components/Hand'
 import User from '../components/User'
 
 export default inject('server')(observer(({ server }) => (
@@ -13,6 +12,5 @@ export default inject('server')(observer(({ server }) => (
     <div style={{ width: '80%' }}>
       {(server.data.users || []).map((u, i) => <User key={i} user={u} />)}
     </div>
-    <Hand />
   </FlexCM>
 )))

@@ -44,7 +44,7 @@ const ShowHide = styled.div`
 
 export default inject('server')(observer(({ server }) => {
   const [show, setShow] = useState(true)
-  return (
+  return server.hand.length > 0 ? (
     <Hand>
       <ShowHide onClick={() => setShow(!show)}>{show ? 'Hide cards' : 'Show cards'}</ShowHide>
       {show ? (
@@ -53,5 +53,5 @@ export default inject('server')(observer(({ server }) => {
         </>
       ) : null}
     </Hand>
-  )
+  ) : null
 }))

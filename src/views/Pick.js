@@ -40,6 +40,5 @@ export default inject('server')(observer(({ server }) => (
     <Questions>
       {(server.data.choices || []).map((q, i) => <Question key={i} question={q} />)}
     </Questions>
-    <Hand />
   </FlexCM>
 )))

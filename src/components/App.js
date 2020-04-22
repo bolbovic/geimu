@@ -1,11 +1,12 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 
+import Error from './Error'
+import Hand from './Hand'
 import Outer from './pages/Outer'
 import Router from './Router'
 
 import '../styles/components/App.css'
-import Error from './Error'
 
 class App extends React.Component {
   constructor () {
@@ -22,6 +23,7 @@ class App extends React.Component {
       <Outer>
         <Error />
         <Router page={server.currentPage} />
+        <Hand />
       </Outer>
     )
   }
