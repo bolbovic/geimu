@@ -1,31 +1,10 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
-import styled from 'styled-components'
 
 import { Button, ButtonOulineRM } from '../components/styles/Form'
-import { Centered, Title } from '../components/styles/Texts'
+import { Title } from '../components/styles/Texts'
 import { FlexCM, FlexH } from '../components/styles/Flex'
-
-const Answer = styled.span`
-  color: #dc322f;
-  font-size: large;
-  font-weight: bolder;
-`
-const Question = styled(Centered)`
-  padding: 10px;
-`
-
-const FilledQuestion = ({ question, answers }) => {
-  let filledQuestion = question
-  if (question.split('_').length === 1) {
-    filledQuestion += ' _'
-  }
-  const parts = filledQuestion.split('_')
-  console.log(filledQuestion, parts)
-  const fixedAnswers = answers.map(a => a[a.length - 1] === '.' ? a.slice(0, -1) : a)
-
-  return <Question>{parts.map((p, i) => <span key={i}>{p}{i !== parts.length - 1 ? fixedAnswers[i] ? <Answer>{fixedAnswers[i]}</Answer> : '_' : null}</span>)}</Question>
-}
+import FilledQuestion from '../components/FilledQuestion'
 
 export default inject('server')(observer(({ server }) => {
   const m = server.numberOfAnswers > 1

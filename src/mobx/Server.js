@@ -1,4 +1,5 @@
 import { extendObservable } from 'mobx'
+import { shuffle } from 'lodash'
 import socketIOClient from 'socket.io-client'
 
 export default class Server {
@@ -10,6 +11,7 @@ export default class Server {
       decks: null,
       error: '',
       serverReady: false,
+      shuffledUsers: [],
       get isMaster () {
         return this.data.master && this.userName === this.data.master.name
       },
@@ -59,6 +61,12 @@ export default class Server {
       this.error = null
       window.sessionStorage.setItem('room-name', this.roomName)
       window.sessionStorage.setItem('user-name', this.userName)
+      if (data.page === 'answers') {
+        this.shuffledUsers = shuffle(this.data.users)
+      }
+      if (data.page === 'results') {
+        this.shuffledUsers = []
+      }
     })
     this.socket.on('error-reconnect', msg => {
       this.serverReady = true
