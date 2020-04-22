@@ -9,8 +9,8 @@ import Server from './mobx/Server'
 import './styles/index.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
-library.add(faTimes)
+import { faCheckCircle, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons'
+library.add(faCheckCircle, faSpinner, faTimes)
 
 const server = new Server()
 

@@ -37,8 +37,14 @@ export default class Server {
       get picker () {
         return this.data.picker || {}
       },
+      get winner () {
+        return this.data.winner || {}
+      },
       get question () {
         return this.data.question || ''
+      },
+      get users () {
+        return this.data.users || []
       }
     })
     this.socket = socketIOClient(process.env.REACT_APP_API_SERVER)

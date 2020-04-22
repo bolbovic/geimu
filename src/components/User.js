@@ -1,12 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { FlexH } from './styles/Flex'
 
 const User = styled(FlexH)`
   font-size: larger;
-  justify-content: space-between;
   width: 100%;
+  svg {
+    margin-left: 10px;
+  }
 `
 
 const Small = styled.span`
@@ -16,10 +19,15 @@ const Small = styled.span`
   padding-left: 5px;
 `
 
+const UserName = styled(FlexH)`
+  flex-grow: 1;
+`
+
 export default ({ showScore, showPicked, showReady, user }) => (
   <User>
-    <FlexH>{user.name}{user.disconnected ? <Small>- disconnected</Small> : null}</FlexH>
+    <UserName>{user.name}{user.disconnected ? <Small>- disconnected</Small> : null}</UserName>
     {showScore ? <div>{user.score}</div> : null}
     {showPicked ? <div>{user.picked ? 'OK' : 'Answering...'}</div> : null}
+    {showReady ? <FontAwesomeIcon spin={!user.ready} icon={user.ready ? 'check-circle' : 'spinner'} /> : null}
   </User>
 )
