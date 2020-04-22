@@ -1,15 +1,18 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 
+import { FlexCM } from '../components/styles/Flex'
+import { Title } from '../components/styles/Texts'
+import Hand from '../components/Hand'
+import User from '../components/User'
+
 export default inject('server')(observer(({ server }) => (
-  <div>
-    <div>Scoreboard</div>
-    <div>
-      {(server.data.users || []).map((u, i) => <div key={i}>{u.name} - {u.score}</div>)}
+  <FlexCM>
+    <Title>Scoreboard</Title>
+    <div>{`Waiting for ${server.picker.name} to pick a question.`}</div>
+    <div style={{ width: '80%' }}>
+      {(server.data.users || []).map((u, i) => <User key={i} user={u} />)}
     </div>
-    <div>Your hand</div>
-    <div>
-      {(server.hand || []).map((h, i) => <div key={i}>{h}</div>)}
-    </div>
-  </div>
+    <Hand />
+  </FlexCM>
 )))

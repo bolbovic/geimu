@@ -5,9 +5,7 @@ import styled from 'styled-components'
 import { PB10 } from '../components/styles/Divs'
 import { FlexC, FlexCM } from '../components/styles/Flex'
 import { Button } from '../components/styles/Form'
-
-const Title = styled.h1`
-`
+import { Title } from '../components/styles/Texts'
 
 const RoomCode = styled.h1`
   color: #b58900;
@@ -40,7 +38,7 @@ const TextPad20 = styled.div`
 `
 
 export default inject('server')(observer(({ server }) => (
-  <FlexCM style={{ height: 'auto' }}>
+  <FlexCM>
     <Title>Welcome to Bolbo Geimuzu</Title>
     <TextPad20>You might want to share the following code to your friends so they can play with you that magnificent game.<br />Have fun ;)</TextPad20>
     <RoomCode>{server.data.name}</RoomCode>

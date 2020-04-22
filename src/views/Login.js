@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { inject, observer } from 'mobx-react'
 
-import { Flex, FlexC, FlexCM, FlexH } from '../components/styles/Flex'
+import { FlexC, FlexCCM, FlexH } from '../components/styles/Flex'
 import { Button, ButtonOulineRM, Input, Label, Select } from '../components/styles/Form'
 
 const DeckSelect = ({ decks, onChange, selected }) => (
@@ -14,7 +14,7 @@ const NewGame = inject('server')(observer(({ back, server }) => {
   const [userName, setUserName] = useState('')
   const [deck, setDeck] = useState(0)
   return (
-    <FlexCM>
+    <FlexCCM>
       <FlexC>
         <Label>Nickname</Label>
         <Input onChange={e => setUserName(e.target.value)} value={userName} name='userName' type='text' />
@@ -29,7 +29,7 @@ const NewGame = inject('server')(observer(({ back, server }) => {
         <ButtonOulineRM onClick={back}>Back</ButtonOulineRM>
         <Button onClick={() => server.createRoom(userName, deck)}>New Game</Button>
       </FlexH>
-    </FlexCM>
+    </FlexCCM>
   )
 }))
 
@@ -38,7 +38,7 @@ const JoinGame = inject('server')(({ back, server }) => {
   const [roomName, setRoomName] = useState('')
 
   return (
-    <FlexCM>
+    <FlexCCM>
       <FlexC>
         <Label>UserName</Label>
         <Input onChange={e => setUserName(e.target.value)} value={userName} name='userName' type='text' />
@@ -51,7 +51,7 @@ const JoinGame = inject('server')(({ back, server }) => {
         <ButtonOulineRM onClick={back}>Back</ButtonOulineRM>
         <Button onClick={() => server.joinRoom(roomName, userName)}>Join Game</Button>
       </FlexH>
-    </FlexCM>
+    </FlexCCM>
   )
 })
 
@@ -59,7 +59,7 @@ export default inject('server')(({ server }) => {
   const [show, setShow] = useState('')
   const back = () => { setShow('') }
   return (
-    <FlexCM>
+    <FlexCCM>
       {show === 'new'
         ? <NewGame back={back} />
         : show === 'join'
@@ -70,6 +70,6 @@ export default inject('server')(({ server }) => {
               <Button onClick={() => setShow('join')}>Join Game</Button>
             </FlexC>
           )}
-    </FlexCM>
+    </FlexCCM>
   )
 })

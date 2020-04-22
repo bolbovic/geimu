@@ -30,6 +30,9 @@ export default class Server {
       },
       get hand () {
         return this.data.self ? this.data.self.hand : []
+      },
+      get picker () {
+        return this.data.picker || {}
       }
     })
     this.socket = socketIOClient(process.env.REACT_APP_API_SERVER)
