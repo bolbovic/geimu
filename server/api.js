@@ -130,6 +130,9 @@ io.on('connection', socket => {
   socket.on('disband-game', () => {
     rooms[myRoom].disband(myUserName)
   })
+  socket.on('kick', userName => {
+    rooms[myRoom].kick(userName)
+  })
   socket.on('quit-game', () => {
     rooms[myRoom].quit(myUserName)
     checkIfFantom(myRoom)

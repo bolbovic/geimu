@@ -77,6 +77,9 @@ export default class Server {
       if (data.page === 'answers') {
         this.showingHand = false
       }
+      if (data.page === 'lobby') {
+        this.showingHand = false
+      }
       if (data.page === 'pick-answer') {
         this.showingHand = true
       }
@@ -175,6 +178,10 @@ export default class Server {
   stop () {
     this.socket.emit('quit-game')
     this.reset()
+  }
+
+  kick (u) {
+    this.socket.emit('kick', u.name)
   }
 
   toggleHand () {

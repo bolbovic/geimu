@@ -5,6 +5,7 @@ import Disband from './Disband'
 import Error from './Error'
 import Info from './Info'
 import Hand from './Hand'
+import Modals from './Modals'
 import Outer from './pages/Outer'
 import Router from './Router'
 
@@ -28,6 +29,7 @@ class App extends React.Component {
         <Error />
         <Router page={server.currentPage} />
         <Hand />
+        <Modals />
       </Outer>
     )
   }

@@ -4,17 +4,20 @@ import { Provider } from 'mobx-react'
 import * as serviceWorker from './tools/serviceWorker'
 
 import App from './components/App'
+import Modals from './mobx/Modals'
 import Server from './mobx/Server'
 
 import './styles/index.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCheckCircle, faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons'
-library.add(faCheckCircle, faSpinner, faTimes)
+import { faCheckCircle, faSpinner, faTimes, faUserSlash } from '@fortawesome/free-solid-svg-icons'
+library.add(faCheckCircle, faSpinner, faTimes, faUserSlash)
 
+const modals = new Modals()
 const server = new Server()
 
 const stores = {
+  modals,
   server
 }
 

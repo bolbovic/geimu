@@ -109,9 +109,6 @@ class Room extends Cliented {
 
   startGame () {
     this.gameStarted = true
-    this.users.forEach(u => {
-      u.hand = this.whiteCards.splice(0, 7)
-    })
     this.nextQuestion()
   }
 
@@ -214,10 +211,9 @@ class Room extends Cliented {
     })
   }
 
-  quit (userName) {
+  userLeft (userName) {
     const u = this.getUser(userName)
     this.users.splice(this.users.indexOf(u), 1)
-    this.users.forEach(u => u.sendInfo(`${userName} has left the game`))
     if (this.master.name === u.name) {
       this.master = this.users[0]
     }
@@ -234,10 +230,20 @@ class Room extends Cliented {
     }
   }
 
+  quit (userName) {
+    this.userLeft(userName)
+    this.users.forEach(u => u.sendInfo(`${userName} has left the game`))
+  }
+
   disband (userName) {
     this.users.forEach(u => {
       u.socket.emit('error-reconnect', `Game disbanded by ${userName}`)
     })
+  }
+
+  kick (userName) {
+    this.userLeft(userName)
+    this.users.forEach(u => u.sendInfo(`${userName} has been kicked`))
   }
 }
 

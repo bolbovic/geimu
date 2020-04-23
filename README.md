@@ -15,7 +15,7 @@ todo
 - ~~handle 2/3 cards selection~~
 - ~~add design~~
 - ~~handle disconnections~~
-- handle kicks for disconnected players
+- ~~handle kicks for disconnected players~~
 - ~~handle switch to spectator~~ replaced by joining anytime
 - handle striking answers (to say we don't want to choose them)
 - show when the picker show answers
