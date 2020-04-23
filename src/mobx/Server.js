@@ -51,6 +51,12 @@ export default class Server {
       },
       get shuffledUsers () {
         return this.data.shuffledUsers || []
+      },
+      get bcLeft () {
+        return this.data.blackCardsLeft
+      },
+      get wcLeft () {
+        return this.data.whiteCardsLeft
       }
     })
     this.socket = socketIOClient(process.env.REACT_APP_API_SERVER)

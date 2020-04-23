@@ -9,6 +9,7 @@ const Outer = styled(Flex)`
   max-width: 500px;
   margin: auto;
   position: relative;
+  padding-top: 40px;
 `
 
 export default ({ children }) => <Outer>{children}</Outer>

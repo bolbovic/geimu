@@ -1,12 +1,12 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 
-import Disband from './Disband'
 import Error from './Error'
 import Info from './Info'
 import Hand from './Hand'
 import Modals from './Modals'
 import Outer from './pages/Outer'
+import Menu from './Menu'
 import Router from './Router'
 
 import '../styles/components/App.css'
@@ -24,11 +24,11 @@ class App extends React.Component {
     const { server } = this.props
     return (
       <Outer>
-        <Disband />
-        <Info />
-        <Error />
+        <Menu />
         <Router page={server.currentPage} />
         <Hand />
+        <Info />
+        <Error />
         <Modals />
       </Outer>
     )

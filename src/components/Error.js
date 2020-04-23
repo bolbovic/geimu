@@ -1,11 +1,13 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 import styled from 'styled-components'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+import Icon from './Icon'
 
 const Flex = styled.div`
   display: flex;
-  position: absolute;
+  position: fixed;
+  top: 0;
   width: 100%;
 `
 
@@ -28,7 +30,7 @@ export default inject('server')(observer(({ server }) => server.error ? (
   <Flex>
     <Error>
       <div>{server.error}</div>
-      <Close onClick={() => server.hideNotification()}><FontAwesomeIcon icon='times' /></Close>
+      <Close onClick={() => server.hideNotification()}><Icon icon='times' /></Close>
     </Error>
   </Flex>
 ) : null))

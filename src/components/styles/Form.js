@@ -65,10 +65,6 @@ export const RoundOutlinedButton = styled.div`
   justify-content: center;
   height: 30px;
   width: 30px;
-  svg {
-    height: 1em !important;
-    width: 1em !important;
-  }
 `
 
 export const Select = styled.select`

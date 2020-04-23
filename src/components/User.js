@@ -1,9 +1,9 @@
 import React from 'react'
+import { observer, inject } from 'mobx-react'
 import styled from 'styled-components'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { FlexH } from './styles/Flex'
-import { observer, inject } from 'mobx-react'
+import Icon from './Icon'
 
 const User = styled(FlexH)`
   font-size: larger;
@@ -27,7 +27,7 @@ const UserName = styled(FlexH)`
 const UserStatus = inject('modals', 'server')(observer(({ modals, property, server, user }) => {
   const k = user.disconnected && server.isMaster
   return (
-    <FontAwesomeIcon
+    <Icon
       icon={k ? 'user-slash' : user[property] ? 'check-circle' : 'spinner'}
       onClick={k ? () => modals.showKick(user) : null}
       spin={!user[property] && !k}
