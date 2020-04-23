@@ -26,3 +26,4 @@ todo
 - handle some kind of settings
 - add number of cards that are left in black and white pile
 - create other similar games
+- change raw.json to a different system
