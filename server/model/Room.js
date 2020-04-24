@@ -7,8 +7,7 @@ class Room extends Cliented {
     this.master = master
     this.name = name
     this.question = ''
-    this.users = []
-    this.users.push(master)
+    this.users = [master]
     this.idxUser = -1
     this.blackCards = shuffle(deck.blackCards)
     this.whiteCards = shuffle(deck.whiteCards)
@@ -19,6 +18,7 @@ class Room extends Cliented {
     this.waitingPhase = null
     this.gameStarted = false
     this.whereToSendNewUser = 'lobby'
+    this.users[0].hand = this.whiteCards.splice(0, 7)
   }
 
   userJoins (user) {
