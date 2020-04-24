@@ -29,8 +29,8 @@ async function addToRaw (deck, fWhites, fBlacks) {
   const blackCards = []
   await eachLine(fBlacks, line => {
     if (line && line !== '') {
-      const text = line.splice(0, -2)
-      const pick = line.splice(-2)
+      const text = line.slice(0, -2)
+      const pick = line.slice(-1)
       blackCards.push({ text, pick })
     }
   })
