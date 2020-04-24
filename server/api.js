@@ -3,12 +3,22 @@ const http = require('http')
 const socketIo = require('socket.io')
 const path = require('path')
 
-const rawDecks = require('../games/raw.json')
+const rawDecks = require('../data/raw.json')
+const order = ['Base', 'CAHe1', 'CAHe2', 'CAHe3', 'CAHe4', 'CAHe5', 'CAHe6', 'greenbox', '90s', 'Box', 'fantasy', 'food', 'science', 'www', 'hillary', 'trumpvote', 'trumpbag', 'xmas2012', 'xmas2013', 'PAXE2013', 'PAXP2013', 'PAXE2014', 'PAXEP2014', 'PAXPP2014', 'PAX2015', 'HOCAH', 'reject', 'reject2', 'Canadian', 'misprint', 'apples', 'crabs', 'matrimony', 'c-tg', 'c-admin', 'c-anime', 'c-antisocial', 'c-equinity', 'c-homestuck', 'c-derps', 'c-doctorwho', 'c-eurovision', 'c-fim', 'c-gamegrumps', 'c-golby', 'GOT', 'CAHgrognards', 'HACK', 'Image1', 'c-ladies', 'c-imgur', 'c-khaos', 'c-mrman', 'c-neindy', 'c-nobilis', 'NSFH', 'c-northernlion', 'c-ragingpsyfag', 'c-stupid', 'c-rt', 'c-rpanons', 'c-socialgamer', 'c-sodomydog', 'c-guywglasses', 'c-vewysewious', 'c-vidya', 'c-xkcd', 'CAHeFR', 'NaabsFR']
+
+const countCards = decks => {
+  return decks.reduce((t, d) => parseInt(t) + rawDecks[d].white.length + rawDecks[d].black.length, 0)
+}
 
 const availableDecks = [
-  { name: 'Main CAU', decks: rawDecks.order.slice(0, 8) },
-  { name: 'All CAU', decks: rawDecks.order.slice(0, 30) }
-].concat(rawDecks.order.map(o => ({ name: rawDecks[o].name, decks: [o] })))
+  { name: 'Main CAH', decks: order.slice(0, 8), cards: countCards(order.slice(0, 8)) },
+  { name: 'All CAH', decks: order.slice(0, 30), cards: countCards(order.slice(0, 30)) },
+  { name: 'All FR', decks: order.slice(-2), cards: countCards(order.slice(-2)) }
+].concat(order.map(o => ({
+  name: rawDecks[o].name,
+  cards: countCards([o]),
+  decks: [o]
+})))
 
 const Room = require('./model/Room')
 const User = require('./model/User')

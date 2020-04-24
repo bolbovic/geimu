@@ -22,7 +22,7 @@ const NewGame = inject('server')(observer(({ back, server }) => {
       {server.decks ? (
         <FlexCM>
           <Label>Deck</Label>
-          <DeckSelect decks={server.decks.map((d, i) => ({ name: d.name, value: i }))} onChange={d => setDeck(d)} selected={deck} />
+          <DeckSelect decks={server.decks.map((d, i) => ({ name: `${d.name} [${d.cards}]`, value: i }))} onChange={d => setDeck(d)} selected={deck} />
         </FlexCM>
       ) : null}
       <FlexH>

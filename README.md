@@ -24,7 +24,8 @@ todo
 - ~~add spectate mode for people who wants to join next turn~~ replaced by joining anytime
 - giving the possibility to people to use their own decks
 - handle some kind of settings
-- add number of cards that are left in black and white pile
+- ~~add number of cards that are left in black and white pile~~
 - create other similar games
-- change raw.json to a different system
+- ~~change raw.json to a different system~~
 - integrate a correct info and error notification system
+- l18i
