@@ -28,7 +28,7 @@
   "scripts": {
     "start": "cp .env.prod .env && node server/api.js && rm .env",
     "start-dev": "cp .env.dev .env && react-scripts start && rm .env",
-    "build": "cp .env.prod .env && react-scripts build && rm .env",
+    "build": "cp .env.prod .env && react-scripts build && node scripts/filesToRaw.js && rm .env",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
