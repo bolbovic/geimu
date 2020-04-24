@@ -15,7 +15,7 @@ const Menu = styled(FlexH)`
 
 export default inject('modals', 'server')(observer(({ modals, server }) => server.roomName ? (
   <Menu>
-    <div>{`B: ${server.bcLeft} - W: ${server.wcLeft}`}</div>
+    <div>{`B: ${server.bcLeft || 0} - W: ${server.wcLeft || 0}`}</div>
     <div>{server.roomName}</div>
     <Quit />
   </Menu>

@@ -178,6 +178,8 @@ class Room extends Cliented {
 
   toClient () {
     return {
+      blackCardsLeft: this.blackCards.length,
+      whiteCardsLeft: this.whiteCards.length,
       master: this.master.toClient(),
       name: this.name,
       users: this.users.map(u => u.toClient())
