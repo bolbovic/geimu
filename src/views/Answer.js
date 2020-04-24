@@ -46,7 +46,6 @@ export default inject('server')(observer(({ server }) => {
     <FlexCM>
       <Title>Selecting</Title>
       <div>{server.isPicker ? 'Pick an answer for your question' : `Waiting for ${server.picker.name} to choose an answer...`}</div>
-      <div>{server.data.question}</div>
       <Questions>
         {server.shuffledUsers.map((u, i) => Array.isArray(u.picked) ? (
           <Answer
