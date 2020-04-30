@@ -21,6 +21,7 @@ const Questions = styled(FlexCM)`
   }
   > div {
     width: 80%;
+    flex-shrink: 0;
   }
 `
 
