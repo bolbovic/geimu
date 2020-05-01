@@ -118,7 +118,7 @@ class Room extends Cliented {
     this.picked = {}
     this.winner = null
     this.whereToSendNewUser = 'scoreboard'
-    this.choices = this.blackCards.splice(0, 3)
+    this.choices = this.blackCards.splice(0, 2)
     this.users.forEach(u => {
       u.resetRound()
       if (this.picker.name === u.name) {

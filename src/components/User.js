@@ -36,9 +36,14 @@ const UserStatus = inject('modals', 'server')(observer(({ modals, property, serv
   )
 }))
 
-export default ({ showScore, showPicked, showReady, user }) => (
+export const UserText = styled.span`
+  color: #d33682;
+  font-size: bigger;
+`
+
+export default ({ isPicker, isWinner, showScore, showPicked, showReady, user }) => (
   <User>
-    <UserName>{user.name}{user.disconnected ? <Small>- disconnected</Small> : null}</UserName>
+    <UserName>{isPicker || isWinner ? <UserText>{user.name}</UserText> : user.name}{user.disconnected ? <Small>- disconnected</Small> : null}</UserName>
     {showScore ? <div>{user.score}</div> : null}
     {showPicked ? <UserStatus property='picked' user={user} /> : null}
     {showReady ? <UserStatus property='ready' user={user} /> : null}
