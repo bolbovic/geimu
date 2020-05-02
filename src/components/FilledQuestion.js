@@ -11,8 +11,8 @@ font-weight: bolder;
 const Question = styled(Centered)`
 padding: 10px;
 `
-const Dq = ({ children }) => <span dangerouslySetInnerHTML={{ __html: children }} />
-const Da = ({ children }) => <Answer dangerouslySetInnerHTML={{ __html: children }} />
+export const Dq = ({ children }) => <span dangerouslySetInnerHTML={{ __html: children }} />
+export const Da = ({ children }) => <Answer dangerouslySetInnerHTML={{ __html: children }} />
 
 export default ({ question, answers }) => {
   let filledQuestion = question

@@ -33,3 +33,4 @@ todo
 - [ ] add color to the name after congrats
 - [ ] change readme for something better
 - [ ] add question on waiting page
+- [ ] add saving the state of server so crashes don't end games
