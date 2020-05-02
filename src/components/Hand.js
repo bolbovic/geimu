@@ -2,8 +2,9 @@ import React from 'react'
 import { inject, observer } from 'mobx-react'
 import styled from 'styled-components'
 
-import { Button } from './styles/Form'
+import { Button, RoundOutlinedButton } from './styles/Form'
 import { FlexC } from './styles/Flex'
+import Icon from './Icon'
 
 const Hand = styled(FlexC)`
   position: fixed;
@@ -29,6 +30,7 @@ const CardStyle = styled(Button)`
   border: 2px solid #fdf6e3;
   border-bottom: none;
   max-width: 500px;
+  position: relative;
   width: 100%;
   &:disabled {
     background: #586e75;
@@ -37,13 +39,21 @@ const CardStyle = styled(Button)`
   }
 `
 
-const Card = ({ card, disabled, onClick, selectionId }) => (
+const S = styled(RoundOutlinedButton)`
+  position: absolute;
+  right: 5px;
+  top: 5px;
+`
+
+const Card = ({ card, disabled, onClick, onSwitch, selectionId }) => (
   <CardStyle
-    dangerouslySetInnerHTML={{ __html: `${card}${selectionId !== -1 ? ` [${selectionId + 1}]` : ''}` }}
     disabled={disabled}
     onClick={onClick}
     style={selectionId !== -1 ? { color: '#b58900' } : null}
-  />
+  >
+    <div dangerouslySetInnerHTML={{ __html: `${card}${selectionId !== -1 ? ` [${selectionId + 1}]` : ''}` }} />
+    {onSwitch && selectionId === -1 ? <S onClick={onSwitch}><Icon icon='times' /></S> : null}
+  </CardStyle>
 )
 
 const ShowHide = styled.div`
@@ -58,7 +68,16 @@ const ShowHide = styled.div`
   padding: 5px;
 `
 
-export default inject('server')(observer(({ server }) => {
+export default inject('modals', 'server')(observer(({ modals, server }) => {
+  const switchCard = (e, c) => {
+    e.stopPropagation()
+    e.preventDefault()
+
+    modals.showSwitch(c)
+
+    return false
+  }
+
   return server.hand.length > 0 ? (
     <Hand>
       <ShowHide onClick={() => server.toggleHand()}>{server.showingHand ? 'Hide cards' : 'Show cards'}</ShowHide>
@@ -69,6 +88,7 @@ export default inject('server')(observer(({ server }) => {
           key={i}
           onClick={() => server.answerClicked(c)}
           selectionId={server.answers.indexOf(c)}
+          onSwitch={server.self.canChange ? e => switchCard(e, c) : null}
         />
       )) : null}
     </Hand>

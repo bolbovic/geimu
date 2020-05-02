@@ -139,6 +139,9 @@ io.on('connection', socket => {
   socket.on('ready', u => {
     rooms[myRoom].setReady(u)
   })
+  socket.on('switch-card', c => {
+    rooms[myRoom].switchCard(myUserName, c)
+  })
   socket.on('disband-game', () => {
     rooms[myRoom].disband(myUserName)
   })

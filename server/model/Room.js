@@ -27,7 +27,7 @@ class Room extends Cliented {
     this.users.forEach(u => {
       if (this.gameStarted) {
         if (user.name !== u.name) {
-          u.update(this.getUpdate(u))
+          u.update(this.getUpdate())
           u.sendInfo(`${user.name} joined!`)
         } else {
           u.changePage(this.whereToSendNewUser, this.getUpdate())
@@ -53,9 +53,9 @@ class Room extends Cliented {
     this.users.forEach(u => {
       console.log('choose-question', u.name, this.picker.name)
       if (this.picker.name === u.name) {
-        u.changePage('waiting-answers', this.getUpdate(u))
+        u.changePage('waiting-answers', this.getUpdate())
       } else {
-        u.changePage('pick-answer', this.getUpdate(u))
+        u.changePage('pick-answer', this.getUpdate())
       }
     })
   }
@@ -63,7 +63,7 @@ class Room extends Cliented {
   chooseAnswer (userName, answers) {
     const u = this.getUser(userName)
     u.picked = answers
-    u.changePage('waiting-answers', this.getUpdate(u))
+    u.changePage('waiting-answers', this.getUpdate())
     answers.forEach(a => this.discard.push(u.hand.splice(u.hand.indexOf(a), 1, this.whiteCards.shift())))
     this.letsContinue()
   }
@@ -74,13 +74,25 @@ class Room extends Cliented {
     this.waitingPhase = 'ready'
     this.whereToSendNewUser = 'results'
     this.users.forEach(u => {
-      u.changePage('results', this.getUpdate(u))
+      if (u.name !== this.winner.name && u.name !== this.picker.name) {
+        u.canChange = true
+      }
+      u.changePage('results', this.getUpdate())
     })
   }
 
   setReady (u) {
     this.getUser(u).ready = true
     this.letsContinue()
+  }
+
+  switchCard (u, c) {
+    const user = this.getUser(u)
+    if (user.canChange) {
+      this.whiteCards.push(c)
+      user.switchCard(c, this.whiteCards.shift())
+      user.update(this.getUpdate())
+    }
   }
 
   letsContinue () {
@@ -90,11 +102,11 @@ class Room extends Cliented {
         this.waitingPhase = null
         this.shuffledUsers = shuffle(this.users)
         this.whereToSendNewUser = 'answers'
-        this.users.forEach(u => u.changePage('answers', this.getUpdate(u)))
+        this.users.forEach(u => u.changePage('answers', this.getUpdate()))
       } else {
         const us = this.getWaitingUsers()
         us.forEach(u => {
-          u.update(this.getUpdate(u))
+          u.update(this.getUpdate())
         })
       }
     } else if (this.waitingPhase === 'ready') {
@@ -102,7 +114,7 @@ class Room extends Cliented {
         this.waitingPhase = null
         this.nextQuestion()
       } else {
-        this.users.forEach(u => u.update(this.getUpdate(u)))
+        this.users.forEach(u => u.update(this.getUpdate()))
       }
     }
   }
@@ -122,9 +134,9 @@ class Room extends Cliented {
     this.users.forEach(u => {
       u.resetRound()
       if (this.picker.name === u.name) {
-        u.changePage('pick-question', this.getUpdate(u))
+        u.changePage('pick-question', this.getUpdate())
       } else {
-        u.changePage('scoreboard', this.getUpdate(u))
+        u.changePage('scoreboard', this.getUpdate())
       }
     })
   }
@@ -161,7 +173,7 @@ class Room extends Cliented {
     return [this.picker].concat(this.users.filter(u => u.picked !== null))
   }
 
-  getUpdate (u) {
+  getUpdate () {
     return {
       choices: this.choices,
       master: this.master.toClient(),
@@ -192,9 +204,9 @@ class Room extends Cliented {
       user.reconnect(socket)
       this.users.forEach(u => {
         if (u.name !== user.name) {
-          u.update(this.getUpdate(u))
+          u.update(this.getUpdate())
         } else {
-          user.reconnectPage(this.getUpdate(u))
+          user.reconnectPage(this.getUpdate())
         }
       })
       return true
@@ -208,7 +220,7 @@ class Room extends Cliented {
     this.getUser(u).disconnected = true
     this.users.forEach(u => {
       if (u.name !== u) {
-        u.update(this.getUpdate(u))
+        u.update(this.getUpdate())
       }
     })
   }
@@ -228,7 +240,7 @@ class Room extends Cliented {
     } else if (this.waitingPhase) {
       this.letsContinue()
     } else {
-      this.users.forEach(u => u.update(this.getUpdate(u)))
+      this.users.forEach(u => u.update(this.getUpdate()))
     }
   }
 

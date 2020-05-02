@@ -29,7 +29,7 @@ todo
 - [x] change raw.json to a different system 
 - [ ] integrate a correct info and error notification system
 - [ ] l18i
-- [ ] add one swiping card a round
+- [x] add one swiping card a round
 - [x] add color to the name after congrats
 - [ ] change readme for something better
 - [x] add question on waiting page

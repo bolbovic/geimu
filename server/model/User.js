@@ -12,6 +12,7 @@ class User extends Cliented {
     this.ready = false
     this.disconnected = false
     this.lastPage = 'lobby'
+    this.canChange = false
   }
 
   changePage (page, data) {
@@ -37,12 +38,17 @@ class User extends Cliented {
   }
 
   reconnectPage (data) {
-    this.changePage(this.lastPage, data)
+    this.changePage(this.lastPage, this.myData(data))
   }
 
   won (q) {
     this.score++
     this.pairs.push({ q, a: this.picked })
+  }
+
+  switchCard (oldC, newC) {
+    this.hand.splice(this.hand.indexOf(oldC), 1, newC)
+    this.canChange = false
   }
 
   resetRound () {
@@ -53,7 +59,11 @@ class User extends Cliented {
   myData (data) {
     return Object.assign(data, {
       hand: this.hand,
-      self: Object.assign(this.toClient(), { hand: this.hand })
+      self: Object.assign(
+        this.toClient(), {
+          canChange: this.canChange,
+          hand: this.hand
+        })
     })
   }
 

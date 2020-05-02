@@ -51,5 +51,16 @@ export default inject('modals', 'server')(observer(({ modals, server }) => (
         </FlexH>
       </Content>
     </Modal>
+    <Modal className={modals.cardToSwitch ? 'show' : ''}>
+      <Content>
+        <FlexCM>
+          <div>{`Are you sure you want to switch the card: "${modals.cardToSwitch}"?`}</div>
+        </FlexCM>
+        <FlexH>
+          <ButtonOulineRM onClick={() => modals.hideSwitch()}>Nevermind</ButtonOulineRM>
+          <Button onClick={() => { server.switchCard(modals.cardToSwitch); modals.hideSwitch() }}>Yup</Button>
+        </FlexH>
+      </Content>
+    </Modal>
   </>
 )))

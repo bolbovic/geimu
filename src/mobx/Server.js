@@ -55,6 +55,9 @@ export default class Server {
       get bcLeft () {
         return this.data.blackCardsLeft
       },
+      get self () {
+        return this.data.self || {}
+      },
       get wcLeft () {
         return this.data.whiteCardsLeft
       }
@@ -188,6 +191,10 @@ export default class Server {
 
   kick (u) {
     this.socket.emit('kick', u.name)
+  }
+
+  switchCard (c) {
+    this.socket.emit('switch-card', c)
   }
 
   toggleHand () {
