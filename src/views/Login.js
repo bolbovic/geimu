@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { inject, observer } from 'mobx-react'
+import styled from 'styled-components'
 
-import { FlexCM, FlexCCM, FlexH } from '../components/styles/Flex'
+import { Flex, FlexCM, FlexCCM, FlexH } from '../components/styles/Flex'
 import { Button, ButtonOulineRM, Input, Label, Select } from '../components/styles/Form'
+import { Title } from '../components/styles/Texts'
 
 const DeckSelect = ({ decks, onChange, selected }) => (
   <Select name='decks' onClick={e => onChange(e.target.value)} selected={selected}>
@@ -55,21 +57,36 @@ const JoinGame = inject('server')(({ back, server }) => {
   )
 })
 
+const Login = styled(FlexCCM)`
+  > div, > h1 {
+    text-align: center;
+    width: 80%;
+  }
+`
+
+const Welcomu = styled(Flex)`
+  height: 100%;
+`
+
 export default inject('server')(({ server }) => {
   const [show, setShow] = useState('')
   const back = () => { setShow('') }
   return (
-    <FlexCCM>
+    <Login>
       {show === 'new'
         ? <NewGame back={back} />
         : show === 'join'
           ? <JoinGame back={back} />
           : (
-            <FlexCM>
+            <Welcomu>
+              <Title>Welcome to Bolubo Geimuzu</Title>
+              <div>Please avoid using Firefox and Safari/iPhone for now... Fixes are coming soonTM...</div>
+              <div>Start by creating a game or join the room of an existing game!</div>
+              <div>&nbsp;</div>
               <Button style={{ marginBottom: '40px' }} onClick={() => setShow('new')}>New Game</Button>
               <Button onClick={() => setShow('join')}>Join Game</Button>
-            </FlexCM>
+            </Welcomu>
           )}
-    </FlexCCM>
+    </Login>
   )
 })
