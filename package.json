@@ -13,7 +13,7 @@
     "express": "^4.17.1",
     "firebase": "^7.14.1",
     "line-reader": "^0.4.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mobx": "^5.15.4",
     "mobx-react": "^6.2.2",
     "react": "^16.13.1",
