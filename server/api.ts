@@ -1,3 +1,5 @@
+import Room from './model/Room'
+
 const express = require('express')
 const http = require('http')
 const socketIo = require('socket.io')
@@ -51,7 +53,7 @@ const generateCode = (length = 4) => {
   return result
 }
 
-const createUser = (name, socket) => new User(name, socket)
+const createUser:Function = (name, socket) => new User(name, socket)
 
 function createRoom (user, deck) {
   let roomName = generateCode()
@@ -66,7 +68,10 @@ function checkIfFantom (roomName) {
   rooms[roomName].users.forEach(u => {
     b = b && u.disconnected
   })
-  b && console.log(`Deleting room ${roomName}`) && delete rooms[roomName]
+  if (b) {
+    console.log(`Deleting room ${roomName}`)
+    delete rooms[roomName]
+  }
 }
 
 function generateDeck (deck) {

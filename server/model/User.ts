@@ -1,7 +1,23 @@
-const Cliented = require('./Cliented')
+import Cliented from './Cliented'
+
+interface Pair {
+  q: string,
+  a: string[]
+}
 
 class User extends Cliented {
-  constructor (name, socket) {
+  hand: string[]
+  name: string
+  score: number
+  pairs: Pair[]
+  socket: any
+  picked: string[]
+  ready: boolean
+  disconnected: boolean
+  lastPage: string
+  canChange: boolean
+
+  constructor (name:string, socket:any) {
     super()
     this.hand = []
     this.name = name
@@ -79,4 +95,4 @@ class User extends Cliented {
   }
 }
 
-module.exports = User
+export default User

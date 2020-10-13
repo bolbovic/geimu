@@ -1,7 +1,26 @@
-const Cliented = require('./Cliented')
-const shuffle = require('lodash').shuffle
+import Cliented from './Cliented'
+import User from './User'
+import shuffle from 'lodash/shuffle'
 
 class Room extends Cliented {
+  master: User
+  name: string
+  question: string
+  users: User[]
+  idxUser: number
+  blackCards: string[]
+  whiteCards: string[]
+  discard: string[]
+  picker: User | null
+  picked: string[] | string
+  winner: User | null
+  shuffledUsers: User[]
+  waitingPhase: string | null
+  gameStarted: boolean
+  whereToSendNewUser: string
+  choices: string[]
+
+
   constructor (name, master, deck) {
     super()
     this.master = master
@@ -127,7 +146,7 @@ class Room extends Cliented {
   nextQuestion () {
     this.pickNextUser()
     this.picker = this.users[this.idxUser]
-    this.picked = {}
+    this.picked = []
     this.winner = null
     this.whereToSendNewUser = 'scoreboard'
     this.choices = this.blackCards.splice(0, 2)
@@ -216,10 +235,10 @@ class Room extends Cliented {
     }
   }
 
-  userDisconnected (u) {
-    this.getUser(u).disconnected = true
+  userDisconnected (ud) {
+    this.getUser(ud).disconnected = true
     this.users.forEach(u => {
-      if (u.name !== u) {
+      if (u.name !== ud) {
         u.update(this.getUpdate())
       }
     })
@@ -261,4 +280,4 @@ class Room extends Cliented {
   }
 }
 
-module.exports = Room
+export { Room }

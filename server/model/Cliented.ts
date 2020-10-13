@@ -4,4 +4,4 @@ class Cliented {
   }
 }
 
-module.exports = Cliented
+export default Cliented
