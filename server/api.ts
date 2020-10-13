@@ -1,4 +1,5 @@
 import Room from './model/Room'
+import User from './model/User'
 
 const express = require('express')
 const http = require('http')
@@ -26,9 +27,6 @@ const availableDecks = [
   cards: countCards([o]),
   decks: [o]
 })))
-
-const Room = require('./model/Room')
-const User = require('./model/User')
 
 const port = process.env.PORT || 4001
 

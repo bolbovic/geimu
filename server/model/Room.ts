@@ -1,6 +1,29 @@
 import Cliented from './Cliented'
 import User from './User'
-import shuffle from 'lodash/shuffle'
+
+function shuffle(array: Array<any>) {
+  let currentIndex:number = array.length, temporaryValue: any, randomIndex:number
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex)
+    currentIndex -= 1
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex]
+    array[currentIndex] = array[randomIndex]
+    array[randomIndex] = temporaryValue
+  }
+
+  return array;
+}
+
+
+interface Deck {
+  blackCards: string[],
+  whiteCards: string[]
+}
 
 class Room extends Cliented {
   master: User
@@ -12,7 +35,6 @@ class Room extends Cliented {
   whiteCards: string[]
   discard: string[]
   picker: User | null
-  picked: string[] | string
   winner: User | null
   shuffledUsers: User[]
   waitingPhase: string | null
@@ -21,7 +43,7 @@ class Room extends Cliented {
   choices: string[]
 
 
-  constructor (name, master, deck) {
+  constructor (name: string, master: User, deck: Deck) {
     super()
     this.master = master
     this.name = name
@@ -40,7 +62,7 @@ class Room extends Cliented {
     this.users[0].hand = this.whiteCards.splice(0, 7)
   }
 
-  userJoins (user) {
+  userJoins (user:User) {
     this.users.push(user)
     user.hand = this.whiteCards.splice(0, 7)
     this.users.forEach(u => {
@@ -64,9 +86,8 @@ class Room extends Cliented {
     })
   }
 
-  chooseQuestion (q) {
+  chooseQuestion (q:string) {
     this.question = q
-    this.picker.picked = q
     this.waitingPhase = 'picking'
     this.whereToSendNewUser = 'pick-answer'
     this.users.forEach(u => {
@@ -79,7 +100,7 @@ class Room extends Cliented {
     })
   }
 
-  chooseAnswer (userName, answers) {
+  chooseAnswer (userName:string, answers: string[]) {
     const u = this.getUser(userName)
     u.picked = answers
     u.changePage('waiting-answers', this.getUpdate())
@@ -87,7 +108,7 @@ class Room extends Cliented {
     this.letsContinue()
   }
 
-  pickAnswer (u) {
+  pickAnswer (u:string) {
     this.winner = this.getUser(u)
     this.winner.won(this.question)
     this.waitingPhase = 'ready'
@@ -100,12 +121,12 @@ class Room extends Cliented {
     })
   }
 
-  setReady (u) {
+  setReady (u:string) {
     this.getUser(u).ready = true
     this.letsContinue()
   }
 
-  switchCard (u, c) {
+  switchCard (u:string, c:string) {
     const user = this.getUser(u)
     if (user.canChange) {
       this.whiteCards.push(c)
@@ -146,7 +167,6 @@ class Room extends Cliented {
   nextQuestion () {
     this.pickNextUser()
     this.picker = this.users[this.idxUser]
-    this.picked = []
     this.winner = null
     this.whereToSendNewUser = 'scoreboard'
     this.choices = this.blackCards.splice(0, 2)
@@ -164,7 +184,7 @@ class Room extends Cliented {
     this.idxUser = (this.idxUser + 1) % this.users.length
   }
 
-  getUser (name) {
+  getUser (name:string) {
     let uu = null
     this.users.forEach(u => {
       if (name === u.name) uu = u
@@ -217,7 +237,7 @@ class Room extends Cliented {
     }
   }
 
-  tryReconnect (u, socket) {
+  tryReconnect (u:string, socket:any) {
     const user = this.getUser(u)
     if (user && user.disconnected === true) {
       user.reconnect(socket)
@@ -244,7 +264,7 @@ class Room extends Cliented {
     })
   }
 
-  userLeft (userName) {
+  userLeft (userName:string) {
     const u = this.getUser(userName)
     this.users.splice(this.users.indexOf(u), 1)
     if (this.master.name === u.name) {
@@ -263,21 +283,21 @@ class Room extends Cliented {
     }
   }
 
-  quit (userName) {
+  quit (userName:string) {
     this.userLeft(userName)
     this.users.forEach(u => u.sendInfo(`${userName} has left the game`))
   }
 
-  disband (userName) {
+  disband (userName:string) {
     this.users.forEach(u => {
       u.socket.emit('error-reconnect', `Game disbanded by ${userName}`)
     })
   }
 
-  kick (userName) {
+  kick (userName:string) {
     this.userLeft(userName)
     this.users.forEach(u => u.sendInfo(`${userName} has been kicked`))
   }
 }
 
-export { Room }
+export default Room

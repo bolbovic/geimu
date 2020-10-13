@@ -9,8 +9,6 @@ import Outer from './pages/Outer'
 import Menu from './Menu'
 import Router from './Router'
 
-import '../styles/components/App.css'
-
 class App extends React.Component {
   constructor () {
     super()
