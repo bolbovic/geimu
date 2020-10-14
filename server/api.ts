@@ -10,14 +10,30 @@ import http = require('http')
 import path = require('path')
 import socketIo = require('socket.io')
 
-const rawDecks = require('../data/raw.json')
-const order = ['Base', 'CAHe1', 'CAHe2', 'CAHe3', 'CAHe4', 'CAHe5', 'CAHe6', 'greenbox', '90s', 'Box', 'fantasy', 'food', 'science', 'www', 'hillary', 'trumpvote', 'trumpbag', 'xmas2012', 'xmas2013', 'PAXE2013', 'PAXP2013', 'PAXE2014', 'PAXEP2014', 'PAXPP2014', 'PAX2015', 'HOCAH', 'reject', 'reject2', 'Canadian', 'misprint', 'apples', 'crabs', 'matrimony', 'c-tg', 'c-admin', 'c-anime', 'c-antisocial', 'c-equinity', 'c-homestuck', 'c-derps', 'c-doctorwho', 'c-eurovision', 'c-fim', 'c-gamegrumps', 'c-golby', 'GOT', 'CAHgrognards', 'HACK', 'Image1', 'c-ladies', 'c-imgur', 'c-khaos', 'c-mrman', 'c-neindy', 'c-nobilis', 'NSFH', 'c-northernlion', 'c-ragingpsyfag', 'c-stupid', 'c-rt', 'c-rpanons', 'c-socialgamer', 'c-sodomydog', 'c-guywglasses', 'c-vewysewious', 'c-vidya', 'c-xkcd', 'dodgeball-g1', 'dodgeball-g2', 'peptides', 'CAHeFR', 'NaabsFR']
-
-const countCards = decks => {
-  return decks.reduce((t, d) => parseInt(t) + rawDecks[d].white.length + rawDecks[d].black.length, 0)
+interface BlackCard extends Object {
+  pick: string,
+  text: string
 }
 
-const availableDecks = [
+interface RawDecks {
+  blackCards: BlackCard[]
+  whiteCards: string[]
+}
+
+const rawDecks:RawDecks = require('../data/raw.json')
+const order = ['Base', 'CAHe1', 'CAHe2', 'CAHe3', 'CAHe4', 'CAHe5', 'CAHe6', 'greenbox', '90s', 'Box', 'fantasy', 'food', 'science', 'www', 'hillary', 'trumpvote', 'trumpbag', 'xmas2012', 'xmas2013', 'PAXE2013', 'PAXP2013', 'PAXE2014', 'PAXEP2014', 'PAXPP2014', 'PAX2015', 'HOCAH', 'reject', 'reject2', 'Canadian', 'misprint', 'apples', 'crabs', 'matrimony', 'c-tg', 'c-admin', 'c-anime', 'c-antisocial', 'c-equinity', 'c-homestuck', 'c-derps', 'c-doctorwho', 'c-eurovision', 'c-fim', 'c-gamegrumps', 'c-golby', 'GOT', 'CAHgrognards', 'HACK', 'Image1', 'c-ladies', 'c-imgur', 'c-khaos', 'c-mrman', 'c-neindy', 'c-nobilis', 'NSFH', 'c-northernlion', 'c-ragingpsyfag', 'c-stupid', 'c-rt', 'c-rpanons', 'c-socialgamer', 'c-sodomydog', 'c-guywglasses', 'c-vewysewious', 'c-vidya', 'c-xkcd', 'dodgeball-g1', 'dodgeball-g2', 'peptides', 'CAHeFR', 'NaabsFR']
+
+interface RawDeck {
+  cards: number,
+  name: string,
+  decks: string[]
+}
+
+const countCards = (decks:string[]):number => {
+  return decks.reduce((t, d) => t + rawDecks[d].white.length + rawDecks[d].black.length, 0)
+}
+
+const availableDecks:RawDeck[] = [
   { name: 'Main CAH', decks: order.slice(0, 8), cards: countCards(order.slice(0, 8)) },
   { name: 'All CAH', decks: order.slice(0, 30), cards: countCards(order.slice(0, 30)) },
   { name: 'Dodgeball Gen 1 & Main CAH', decks: ['Base', 'CAHe1', 'CAHe2', 'CAHe3', 'CAHe4', 'CAHe5', 'CAHe6', 'dodgeball-g1'], cards: countCards(['Base', 'CAHe1', 'CAHe2', 'CAHe3', 'CAHe4', 'CAHe5', 'CAHe6', 'dodgeball-g1']) },
@@ -47,7 +63,7 @@ const io:SocketServer = socketIo(server) // < Interesting!
 const rooms:Object = {}
 const chars:string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-const generateCode:Function = (length = 4) : string => {
+const generateCode:Function = (length = 4):string => {
   let result = ''
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length))
@@ -65,7 +81,7 @@ function createRoom (user:User, deck:number):any {
   return room.toClient()
 }
 
-function checkIfFantom (roomName:string) : void {
+function checkIfFantom (roomName:string):void {
   let b = true
   rooms[roomName].users.forEach(u => {
     b = b && u.disconnected
@@ -81,7 +97,7 @@ interface Deck {
   whiteCards: string[]
 }
 
-function generateDeck (deck:number) : Deck {
+function generateDeck (deck:number):Deck {
   let blackCards = []
   let whiteCards = []
   availableDecks[deck].decks.forEach(d => {
