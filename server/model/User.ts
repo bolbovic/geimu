@@ -1,3 +1,5 @@
+import { Socket } from 'socket.io'
+import { RoomToClientLite } from './Room'
 import Cliented from './Cliented'
 
 interface Pair {
@@ -5,12 +7,30 @@ interface Pair {
   a: string[]
 }
 
+interface UserToClient {
+  disconnected: boolean,
+  name: string,
+  pairs: Pair[],
+  picked: string[],
+  ready: boolean,
+  score: number
+}
+
+interface Self extends UserToClient {
+  canChange: boolean,
+  hand: string[]
+}
+
+interface SelfData extends RoomToClientLite {
+  self: Self
+}
+
 class User extends Cliented {
   hand: string[]
   name: string
   score: number
   pairs: Pair[]
-  socket: any
+  socket: Socket
   picked: string[]
   ready: boolean
   disconnected: boolean
@@ -31,12 +51,12 @@ class User extends Cliented {
     this.canChange = false
   }
 
-  changePage (page:string, data:any) {
+  changePage (page:string, data:RoomToClientLite) {
     this.lastPage = page
     !this.disconnected && this.socket.emit('change-page', { page, data: this.myData(data) })
   }
 
-  update (data:any) {
+  update (data:RoomToClientLite) {
     !this.disconnected && this.socket.emit('new-data', this.myData(data))
   }
 
@@ -48,12 +68,12 @@ class User extends Cliented {
     !this.disconnected && this.socket.emit('info-msg', err)
   }
 
-  reconnect (socket:any) {
+  reconnect (socket:Socket) {
     this.socket = socket
     this.disconnected = false
   }
 
-  reconnectPage (data:any) {
+  reconnectPage (data:RoomToClientLite) {
     this.changePage(this.lastPage, this.myData(data))
   }
 
@@ -72,9 +92,8 @@ class User extends Cliented {
     this.ready = false
   }
 
-  myData (data:any) {
+  myData (data:RoomToClientLite) : SelfData {
     return Object.assign(data, {
-      hand: this.hand,
       self: Object.assign(
         this.toClient(), {
           canChange: this.canChange,
@@ -83,7 +102,7 @@ class User extends Cliented {
     })
   }
 
-  toClient () {
+  toClient () : UserToClient {
     return {
       disconnected: this.disconnected,
       name: this.name,
@@ -96,3 +115,4 @@ class User extends Cliented {
 }
 
 export default User
+export { User, UserToClient }

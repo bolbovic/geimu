@@ -1,7 +1,8 @@
+import { Socket } from 'socket.io'
 import Cliented from './Cliented'
-import User from './User'
+import User, { UserToClient } from './User'
 
-function shuffle(array: Array<any>) {
+function shuffle(array: Array<any>) : Array<any> {
   let currentIndex:number = array.length, temporaryValue: any, randomIndex:number
 
   // While there remain elements to shuffle...
@@ -19,6 +20,21 @@ function shuffle(array: Array<any>) {
   return array;
 }
 
+interface RoomToClientLite {
+  blackCardsLeft: number,
+  whiteCardsLeft: number,
+  master: UserToClient,
+  name: string,
+  users: UserToClient[]
+}
+
+interface RoomToClient extends RoomToClientLite {
+  choices: string[],
+  picker: UserToClient,
+  question: string,
+  shuffledUsers: UserToClient[],
+  winner: UserToClient
+}
 
 interface Deck {
   blackCards: string[],
@@ -86,7 +102,11 @@ class Room extends Cliented {
     })
   }
 
-  chooseQuestion (q:string) {
+  chooseQuestion (q:string, name:string) {
+    if (name !== this.picker.name) {
+      console.error('wtf, wrong picker...')
+      return
+    }
     this.question = q
     this.waitingPhase = 'picking'
     this.whereToSendNewUser = 'pick-answer'
@@ -104,7 +124,7 @@ class Room extends Cliented {
     const u = this.getUser(userName)
     u.picked = answers
     u.changePage('waiting-answers', this.getUpdate())
-    answers.forEach(a => this.discard.push(u.hand.splice(u.hand.indexOf(a), 1, this.whiteCards.shift())))
+    answers.forEach(a => this.discard.push(u.hand.splice(u.hand.indexOf(a), 1, this.whiteCards.shift())[0]))
     this.letsContinue()
   }
 
@@ -140,7 +160,7 @@ class Room extends Cliented {
     if (this.waitingPhase === 'picking') {
       if (this.everyonePicked) {
         this.waitingPhase = null
-        this.shuffledUsers = shuffle(this.users)
+        this.shuffledUsers = shuffle(this.users.slice(0))
         this.whereToSendNewUser = 'answers'
         this.users.forEach(u => u.changePage('answers', this.getUpdate()))
       } else {
@@ -184,7 +204,7 @@ class Room extends Cliented {
     this.idxUser = (this.idxUser + 1) % this.users.length
   }
 
-  getUser (name:string) {
+  getUser (name:string) : User {
     let uu = null
     this.users.forEach(u => {
       if (name === u.name) uu = u
@@ -192,7 +212,7 @@ class Room extends Cliented {
     return uu
   }
 
-  get everyonePicked () {
+  get everyonePicked () : boolean {
     let bool = true
     this.users.forEach(u => {
       if (u.picked === null && u.name !== this.picker.name) bool = false
@@ -200,7 +220,7 @@ class Room extends Cliented {
     return bool
   }
 
-  get everyoneReady () {
+  get everyoneReady () : boolean {
     let bool = true
     this.users.forEach(u => {
       if (!u.ready) bool = false
@@ -208,11 +228,11 @@ class Room extends Cliented {
     return bool
   }
 
-  getWaitingUsers () {
+  getWaitingUsers () : User[] {
     return [this.picker].concat(this.users.filter(u => u.picked !== null))
   }
 
-  getUpdate () {
+  getUpdate () : RoomToClient {
     return {
       choices: this.choices,
       master: this.master.toClient(),
@@ -227,7 +247,7 @@ class Room extends Cliented {
     }
   }
 
-  toClient () {
+  toClient () : RoomToClientLite {
     return {
       blackCardsLeft: this.blackCards.length,
       whiteCardsLeft: this.whiteCards.length,
@@ -237,7 +257,7 @@ class Room extends Cliented {
     }
   }
 
-  tryReconnect (u:string, socket:any) {
+  tryReconnect (u:string, socket:Socket) : boolean {
     const user = this.getUser(u)
     if (user && user.disconnected === true) {
       user.reconnect(socket)
@@ -255,7 +275,7 @@ class Room extends Cliented {
     }
   }
 
-  userDisconnected (ud) {
+  userDisconnected (ud:string) {
     this.getUser(ud).disconnected = true
     this.users.forEach(u => {
       if (u.name !== ud) {
@@ -301,3 +321,4 @@ class Room extends Cliented {
 }
 
 export default Room
+export { RoomToClient, RoomToClientLite }

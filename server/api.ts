@@ -1,10 +1,14 @@
 import Room from './model/Room'
 import User from './model/User'
 
-const express = require('express')
-const http = require('http')
-const socketIo = require('socket.io')
-const path = require('path')
+import { Server as SocketServer, Socket } from 'socket.io'
+import { Server as HttpServer } from 'http'
+import { Express } from 'express'
+
+import express = require('express')
+import http = require('http')
+import path = require('path')
+import socketIo = require('socket.io')
 
 const rawDecks = require('../data/raw.json')
 const order = ['Base', 'CAHe1', 'CAHe2', 'CAHe3', 'CAHe4', 'CAHe5', 'CAHe6', 'greenbox', '90s', 'Box', 'fantasy', 'food', 'science', 'www', 'hillary', 'trumpvote', 'trumpbag', 'xmas2012', 'xmas2013', 'PAXE2013', 'PAXP2013', 'PAXE2014', 'PAXEP2014', 'PAXPP2014', 'PAX2015', 'HOCAH', 'reject', 'reject2', 'Canadian', 'misprint', 'apples', 'crabs', 'matrimony', 'c-tg', 'c-admin', 'c-anime', 'c-antisocial', 'c-equinity', 'c-homestuck', 'c-derps', 'c-doctorwho', 'c-eurovision', 'c-fim', 'c-gamegrumps', 'c-golby', 'GOT', 'CAHgrognards', 'HACK', 'Image1', 'c-ladies', 'c-imgur', 'c-khaos', 'c-mrman', 'c-neindy', 'c-nobilis', 'NSFH', 'c-northernlion', 'c-ragingpsyfag', 'c-stupid', 'c-rt', 'c-rpanons', 'c-socialgamer', 'c-sodomydog', 'c-guywglasses', 'c-vewysewious', 'c-vidya', 'c-xkcd', 'dodgeball-g1', 'dodgeball-g2', 'peptides', 'CAHeFR', 'NaabsFR']
@@ -30,20 +34,20 @@ const availableDecks = [
 
 const port = process.env.PORT || 4001
 
-const app = express()
+const app:Express = express()
 app.use(express.static(path.join(__dirname, '..', '/build')))
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, '..', '/index.html'))
 })
 
-const server = http.createServer(app)
+const server:HttpServer = http.createServer(app)
 
-const io = socketIo(server) // < Interesting!
+const io:SocketServer = socketIo(server) // < Interesting!
 
-const rooms = {}
-const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+const rooms:Object = {}
+const chars:string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-const generateCode = (length = 4) => {
+const generateCode:Function = (length = 4) : string => {
   let result = ''
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length))
@@ -51,9 +55,9 @@ const generateCode = (length = 4) => {
   return result
 }
 
-const createUser:Function = (name, socket) => new User(name, socket)
+const createUser:Function = (name: string, socket: Socket) : User => new User(name, socket)
 
-function createRoom (user, deck) {
+function createRoom (user:User, deck:number):any {
   let roomName = generateCode()
   for (; rooms[roomName] !== undefined; roomName = generateCode());
   const room = new Room(roomName, user, generateDeck(deck))
@@ -61,7 +65,7 @@ function createRoom (user, deck) {
   return room.toClient()
 }
 
-function checkIfFantom (roomName) {
+function checkIfFantom (roomName:string) : void {
   let b = true
   rooms[roomName].users.forEach(u => {
     b = b && u.disconnected
@@ -72,7 +76,12 @@ function checkIfFantom (roomName) {
   }
 }
 
-function generateDeck (deck) {
+interface Deck {
+  blackCards: string[],
+  whiteCards: string[]
+}
+
+function generateDeck (deck:number) : Deck {
   let blackCards = []
   let whiteCards = []
   availableDecks[deck].decks.forEach(d => {
@@ -85,11 +94,11 @@ function generateDeck (deck) {
   }
 }
 
-io.on('connection', socket => {
+io.on('connection', (socket:Socket) => {
   console.log('New client connected')
   let myRoom = ''
   let myUserName = ''
-  socket.on('create-room', (userName, deck) => {
+  socket.on('create-room', (userName:string, deck:number) => {
     console.log('create-room', userName, deck)
     if (!userName || userName === '') {
       socket.emit('error-msg', 'Wrong username')
@@ -102,7 +111,7 @@ io.on('connection', socket => {
       data: rooms[myRoom].toClient()
     })
   })
-  socket.on('join-room', (roomName, userName) => {
+  socket.on('join-room', (roomName:string, userName:string) => {
     console.log('join-room', roomName, userName)
     if (!rooms[roomName]) {
       socket.emit('error-msg', 'Room doesn\'t exists')
@@ -133,19 +142,19 @@ io.on('connection', socket => {
   socket.on('launch-game', () => {
     rooms[myRoom].startGame()
   })
-  socket.on('choose-question', q => {
-    rooms[myRoom].chooseQuestion(q)
+  socket.on('choose-question', (q:string) => {
+    rooms[myRoom].chooseQuestion(q, myUserName)
   })
-  socket.on('choose-answer', (u, a) => {
-    rooms[myRoom].chooseAnswer(u, a)
+  socket.on('choose-answer', (a:string[]) => {
+    rooms[myRoom].chooseAnswer(myUserName, a)
   })
-  socket.on('pick-answer', u => {
+  socket.on('pick-answer', (u:string) => {
     rooms[myRoom].pickAnswer(u)
   })
-  socket.on('ready', u => {
-    rooms[myRoom].setReady(u)
+  socket.on('ready', () => {
+    rooms[myRoom].setReady(myUserName)
   })
-  socket.on('switch-card', c => {
+  socket.on('switch-card', (c:string) => {
     rooms[myRoom].switchCard(myUserName, c)
   })
   socket.on('disband-game', () => {

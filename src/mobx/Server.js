@@ -150,7 +150,7 @@ export default class Server {
   }
 
   chooseAnswers () {
-    this.socket.emit('choose-answer', this.userName, this.answers)
+    this.socket.emit('choose-answer', this.answers)
     this.answers = []
   }
 
@@ -159,7 +159,7 @@ export default class Server {
   }
 
   ready () {
-    this.socket.emit('ready', this.userName)
+    this.socket.emit('ready')
   }
 
   answerClicked (card) {
