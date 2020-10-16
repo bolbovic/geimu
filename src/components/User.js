@@ -26,11 +26,12 @@ const UserName = styled(FlexH)`
 
 const UserStatus = inject('modals', 'server')(observer(({ modals, property, server, user }) => {
   const k = user.disconnected && server.isMaster
+  const ifPickedHidePicker = property === 'picked' ? server.picker.name === user.name : false
   return (
     <Icon
-      icon={k ? 'user-slash' : user[property] ? 'check-circle' : 'spinner'}
+      icon={k ? 'user-slash' : user[property] || ifPickedHidePicker ? 'check-circle' : 'spinner'}
       onClick={k ? () => modals.showKick(user) : null}
-      spin={!user[property] && !k}
+      spin={!user[property] && !k && !ifPickedHidePicker}
       style={{ cursor: k ? 'pointer' : 'default' }}
     />
   )
