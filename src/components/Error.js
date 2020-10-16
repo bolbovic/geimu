@@ -26,7 +26,7 @@ const Close = styled.div`
   cursor: pointer;
 `
 
-export default inject('server')(observer(({ server }) => server.error ? (
+export default inject('server')(observer(({ server }) => server.error !== '' ? (
   <Flex>
     <Error>
       <div>{server.error}</div>
