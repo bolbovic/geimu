@@ -9,15 +9,9 @@ import Outer from './pages/Outer'
 import Menu from './Menu'
 import Router from './Router'
 
+@observer
+@inject('server')
 class App extends React.Component {
-  constructor () {
-    super()
-    this.state = {
-      response: false,
-      endpoint: 'http://127.0.0.1:4001'
-    }
-  }
-
   render () {
     const { server } = this.props
     return (
@@ -32,5 +26,4 @@ class App extends React.Component {
     )
   }
 }
-
-export default inject('server')(observer(App))
+export default App
